@@ -714,30 +714,9 @@ const Dashboard = () => {
                   </div>
                 )}
               </div>
-            ) : (
-              <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
-                <div className="space-y-3">
-                  {stats.recent_transactions.map((transaction, index) => (
-                    <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {transaction.from_user_id === user.id ? 'Gave' : 'Received'} {transaction.amount} points
-                        </p>
-                        <p className="text-sm text-gray-600">{transaction.reason}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500">
-                          {new Date(transaction.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
             )}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Give Points Modal */}
