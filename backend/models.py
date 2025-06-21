@@ -209,17 +209,35 @@ class PageView(BaseModel):
     time_spent: int  # seconds
     scroll_depth: float  # percentage
     interactions: List[str] = []  # button clicks, etc.
+    entry_time: datetime = Field(default_factory=datetime.utcnow)
+    exit_time: Optional[datetime] = None
+    clicks: List[Dict[str, Any]] = []  # Click positions and elements
+    focus_areas: List[Dict[str, Any]] = []  # Areas where user spent most time
 
 class DocumentView(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     document_id: str
     viewer_info: ViewerInfo
+    session_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     total_time_spent: int = 0
     pages_viewed: List[PageView] = []
     completed_viewing: bool = False
     downloaded: bool = False
     signed: bool = False
+    current_page: int = 1
+    max_page_reached: int = 1
+
+class PageAnalytics(BaseModel):
+    document_id: str
+    page_number: int
+    total_views: int
+    unique_viewers: int
+    average_time_spent: float
+    completion_rate: float  # Percentage who viewed this page
+    interaction_rate: float  # Percentage who interacted with page elements
+    heat_map_data: List[Dict[str, Any]] = []  # Click and focus heat map data
+    generated_at: datetime = Field(default_factory=datetime.utcnow)
 
 class DocumentAnalytics(BaseModel):
     document_id: str
@@ -231,6 +249,8 @@ class DocumentAnalytics(BaseModel):
     sign_rate: float
     popular_sections: List[Dict[str, Any]]
     viewer_engagement: Dict[str, Any]
+    page_analytics: List[PageAnalytics] = []  # Page-wise analytics
+    drop_off_points: List[int] = []  # Pages where users typically stop
     generated_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Activity Log Models
