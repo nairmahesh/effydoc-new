@@ -748,25 +748,292 @@ async def get_comments(
     document_data = await check_document_access(document_id, current_user, "view")
     return document_data.get("comments", [])
 
-# ==================== TRACKING ENDPOINTS ====================
+# ==================== PAGE-WISE TRACKING ENDPOINTS ====================
 
-@api_router.post("/tracking/view")
-async def track_document_view(view_data: Dict[str, Any]):
-    """Track document view (public endpoint for shared documents)"""
+@api_router.post("/tracking/page-view")
+async def track_page_view(view_data: Dict[str, Any]):
+    """Track page-wise document viewing with detailed analytics"""
     views_collection = await get_collection('document_views')
     
-    document_view = DocumentView(
-        document_id=view_data["document_id"],
-        viewer_info=ViewerInfo(**view_data["viewer_info"]),
-        pages_viewed=view_data.get("pages_viewed", []),
-        total_time_spent=view_data.get("total_time_spent", 0),
-        completed_viewing=view_data.get("completed_viewing", False),
-        downloaded=view_data.get("downloaded", False),
-        signed=view_data.get("signed", False)
+    # Check if session already exists
+    session_id = view_data.get("session_id")
+    document_id = view_data["document_id"]
+    page_number = view_data["page_number"]
+    
+    if session_id:
+        # Update existing session
+        existing_view = await views_collection.find_one({"session_id": session_id})
+        
+        if existing_view:
+            # Update page view data
+            pages_viewed = existing_view.get("pages_viewed", [])
+            
+            # Find existing page view or create new one
+            page_view_index = next((i for i, pv in enumerate(pages_viewed) if pv["page_number"] == page_number), None)
+            
+            page_view_data = {
+                "page_number": page_number,
+                "time_spent": view_data.get("time_spent", 0),
+                "scroll_depth": view_data.get("scroll_depth", 0),
+                "interactions": view_data.get("interactions", []),
+                "entry_time": existing_view["timestamp"] if page_view_index is None else pages_viewed[page_view_index]["entry_time"],
+                "exit_time": datetime.utcnow().isoformat(),
+                "clicks": view_data.get("clicks", []),
+                "focus_areas": view_data.get("focus_areas", [])
+            }
+            
+            if page_view_index is not None:
+                pages_viewed[page_view_index] = page_view_data
+            else:
+                pages_viewed.append(page_view_data)
+            
+            # Update session
+            await views_collection.update_one(
+                {"session_id": session_id},
+                {
+                    "$set": {
+                        "pages_viewed": pages_viewed,
+                        "current_page": page_number,
+                        "max_page_reached": max(existing_view.get("max_page_reached", 1), page_number),
+                        "total_time_spent": sum(pv.get("time_spent", 0) for pv in pages_viewed)
+                    }
+                }
+            )
+        else:
+            # Create new session if not found
+            session_id = str(uuid.uuid4())
+    
+    if not session_id or not existing_view:
+        # Create new document view session
+        session_id = str(uuid.uuid4())
+        
+        page_view_data = PageView(
+            page_number=page_number,
+            time_spent=view_data.get("time_spent", 0),
+            scroll_depth=view_data.get("scroll_depth", 0),
+            interactions=view_data.get("interactions", []),
+            clicks=view_data.get("clicks", []),
+            focus_areas=view_data.get("focus_areas", [])
+        )
+        
+        document_view = DocumentView(
+            document_id=document_id,
+            session_id=session_id,
+            viewer_info=ViewerInfo(**view_data["viewer_info"]),
+            pages_viewed=[page_view_data.dict()],
+            current_page=page_number,
+            max_page_reached=page_number,
+            total_time_spent=view_data.get("time_spent", 0)
+        )
+        
+        await views_collection.insert_one(document_view.dict())
+    
+    return {"message": "Page view tracked successfully", "session_id": session_id}
+
+@api_router.get("/documents/{document_id}/page-analytics")
+async def get_page_analytics(
+    document_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Get detailed page-wise analytics for a document"""
+    await check_document_access(document_id, current_user, "view")
+    
+    views_collection = await get_collection('document_views')
+    documents_collection = await get_collection('documents')
+    
+    # Get document info
+    document = await documents_collection.find_one({"id": document_id})
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+    
+    total_pages = document.get("total_pages", len(document.get("pages", [])))
+    
+    # Get all views for this document
+    views = await views_collection.find({"document_id": document_id}).to_list(1000)
+    
+    if not views:
+        return {
+            "document_id": document_id,
+            "total_pages": total_pages,
+            "page_analytics": [],
+            "overall_analytics": {
+                "total_views": 0,
+                "unique_viewers": 0,
+                "average_completion_rate": 0,
+                "drop_off_points": []
+            }
+        }
+    
+    # Calculate page-wise analytics
+    page_analytics = []
+    unique_viewers = len(set(view.get("viewer_info", {}).get("ip_address") for view in views))
+    
+    for page_num in range(1, total_pages + 1):
+        # Get all page views for this page
+        page_views = []
+        for view in views:
+            for page_view in view.get("pages_viewed", []):
+                if page_view.get("page_number") == page_num:
+                    page_views.append(page_view)
+        
+        if page_views:
+            total_page_views = len(page_views)
+            avg_time = sum(pv.get("time_spent", 0) for pv in page_views) / total_page_views
+            interaction_count = sum(len(pv.get("interactions", [])) for pv in page_views)
+            
+            # Calculate heat map data
+            heat_map_data = []
+            for pv in page_views:
+                heat_map_data.extend(pv.get("clicks", []))
+                heat_map_data.extend(pv.get("focus_areas", []))
+            
+            page_analytics.append({
+                "page_number": page_num,
+                "total_views": total_page_views,
+                "unique_viewers": len(set(pv.get("viewer_id") for pv in page_views if pv.get("viewer_id"))),
+                "average_time_spent": avg_time,
+                "completion_rate": (total_page_views / len(views)) * 100,
+                "interaction_rate": (interaction_count / total_page_views) * 100 if total_page_views > 0 else 0,
+                "heat_map_data": heat_map_data
+            })
+        else:
+            page_analytics.append({
+                "page_number": page_num,
+                "total_views": 0,
+                "unique_viewers": 0,
+                "average_time_spent": 0,
+                "completion_rate": 0,
+                "interaction_rate": 0,
+                "heat_map_data": []
+            })
+    
+    # Calculate drop-off points
+    page_reach_counts = {}
+    for view in views:
+        max_page = view.get("max_page_reached", 1)
+        for page_num in range(1, max_page + 1):
+            page_reach_counts[page_num] = page_reach_counts.get(page_num, 0) + 1
+    
+    drop_off_points = []
+    for page_num in range(1, total_pages):
+        current_page_views = page_reach_counts.get(page_num, 0)
+        next_page_views = page_reach_counts.get(page_num + 1, 0)
+        if current_page_views > 0:
+            drop_off_rate = ((current_page_views - next_page_views) / current_page_views) * 100
+            if drop_off_rate > 30:  # Consider 30%+ drop-off as significant
+                drop_off_points.append(page_num)
+    
+    # Overall completion rate
+    completion_rate = (page_reach_counts.get(total_pages, 0) / len(views)) * 100 if views else 0
+    
+    return {
+        "document_id": document_id,
+        "total_pages": total_pages,
+        "page_analytics": page_analytics,
+        "overall_analytics": {
+            "total_views": len(views),
+            "unique_viewers": unique_viewers,
+            "average_completion_rate": completion_rate,
+            "drop_off_points": drop_off_points,
+            "total_time_spent": sum(view.get("total_time_spent", 0) for view in views),
+            "average_session_duration": sum(view.get("total_time_spent", 0) for view in views) / len(views) if views else 0
+        }
+    }
+
+@api_router.put("/documents/{document_id}/pages/{page_number}")
+async def update_document_page(
+    document_id: str,
+    page_number: int,
+    page_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Update a specific page of a document"""
+    await check_document_access(document_id, current_user, "edit")
+    documents_collection = await get_collection('documents')
+    
+    # Update the specific page
+    await documents_collection.update_one(
+        {"id": document_id, "pages.page_number": page_number},
+        {"$set": {
+            "pages.$.title": page_data.get("title"),
+            "pages.$.content": page_data.get("content"),
+            "pages.$.multimedia_elements": page_data.get("multimedia_elements", []),
+            "pages.$.interactive_elements": page_data.get("interactive_elements", []),
+            "updated_at": datetime.utcnow()
+        }}
     )
     
-    await views_collection.insert_one(document_view.dict())
-    return {"message": "View tracked successfully"}
+    # Log activity
+    await log_activity(
+        current_user.id, 
+        current_user.full_name, 
+        document_id, 
+        ActionType.EDIT, 
+        {
+            "page_number": page_number,
+            "page_title": page_data.get("title"),
+            "action": "page_updated"
+        }
+    )
+    
+    return {"message": "Page updated successfully"}
+
+@api_router.post("/documents/{document_id}/pages/{page_number}/multimedia")
+async def add_multimedia_to_page(
+    document_id: str,
+    page_number: int,
+    multimedia_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Add multimedia element to a specific page"""
+    await check_document_access(document_id, current_user, "edit")
+    documents_collection = await get_collection('documents')
+    
+    multimedia_element = MultimediaElement(
+        type=multimedia_data["type"],
+        url=multimedia_data["url"],
+        title=multimedia_data.get("title"),
+        description=multimedia_data.get("description"),
+        duration=multimedia_data.get("duration"),
+        position=multimedia_data.get("position", {"x": 0.5, "y": 0.5}),
+        size=multimedia_data.get("size", {"width": "200px", "height": "150px"})
+    )
+    
+    # Add multimedia element to the page
+    await documents_collection.update_one(
+        {"id": document_id, "pages.page_number": page_number},
+        {"$push": {"pages.$.multimedia_elements": multimedia_element.dict()}}
+    )
+    
+    return {"message": "Multimedia element added to page successfully", "element": multimedia_element}
+
+@api_router.post("/documents/{document_id}/pages/{page_number}/interactive")
+async def add_interactive_to_page(
+    document_id: str,
+    page_number: int,
+    interactive_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Add interactive element to a specific page"""
+    await check_document_access(document_id, current_user, "edit")
+    documents_collection = await get_collection('documents')
+    
+    interactive_element = InteractiveElement(
+        type=interactive_data["type"],
+        label=interactive_data["label"],
+        action=interactive_data.get("action"),
+        required=interactive_data.get("required", False),
+        position=interactive_data.get("position", {"x": 0.5, "y": 0.3}),
+        size=interactive_data.get("size", {"width": "120px", "height": "40px"})
+    )
+    
+    # Add interactive element to the page
+    await documents_collection.update_one(
+        {"id": document_id, "pages.page_number": page_number},
+        {"$push": {"pages.$.interactive_elements": interactive_element.dict()}}
+    )
+    
+    return {"message": "Interactive element added to page successfully", "element": interactive_element}
 
 @api_router.get("/documents/{document_id}/analytics")
 async def get_document_analytics(
