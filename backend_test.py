@@ -59,12 +59,13 @@ class DocumentPlatformAPITest(unittest.TestCase):
         
     def test_04_user_login(self):
         """Test user login"""
+        # For login, we need to use JSON body instead of params
         login_data = {
             "email": self.test_user_email,
             "password": self.test_user_password
         }
         
-        response = requests.post(f"{self.base_url}/auth/login", params=login_data)
+        response = requests.post(f"{self.base_url}/auth/login", json=login_data)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         
@@ -219,7 +220,8 @@ class DocumentPlatformAPITest(unittest.TestCase):
                 {
                     "page_number": 1,
                     "time_spent": 60,
-                    "scroll_depth": 100.0
+                    "scroll_depth": 100.0,
+                    "interactions": []
                 }
             ],
             "total_time_spent": 60,
