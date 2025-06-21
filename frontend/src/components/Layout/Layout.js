@@ -21,7 +21,7 @@ const Layout = () => {
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden lg:ml-64">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Header onToggleSidebar={toggleSidebar} />
         
         <main className="flex-1 overflow-y-auto">
