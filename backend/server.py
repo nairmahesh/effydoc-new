@@ -222,6 +222,7 @@ async def check_and_award_badges(user_id: str, company_id: str):
     earned_badge_ids = [badge["badge_id"] for badge in earned_badges]
     
     # Check which badges user qualifies for
+    badges_awarded = False
     for badge in badges:
         if (badge["id"] not in earned_badge_ids and 
             badge.get("points_required", 0) <= current_points):
@@ -232,6 +233,9 @@ async def check_and_award_badges(user_id: str, company_id: str):
                 badge_id=badge["id"]
             )
             await db.user_badges.insert_one(user_badge.dict())
+            badges_awarded = True
+            
+    return badges_awarded
 
 # Authentication routes
 @api_router.post("/auth/register")
