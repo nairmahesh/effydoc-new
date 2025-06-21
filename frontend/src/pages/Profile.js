@@ -114,7 +114,7 @@ const Profile = () => {
 
   const removeEmailConnection = async (connectionId) => {
     try {
-      await authAPI.api.delete(`/users/me/email-connections/${connectionId}`);
+      await authAPI.removeEmailConnection(connectionId);
       setEmailConnections(emailConnections.filter(conn => conn.id !== connectionId));
       toast.success('Email connection removed successfully!');
     } catch (error) {
