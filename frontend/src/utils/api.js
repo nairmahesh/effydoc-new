@@ -82,9 +82,15 @@ export const authAPI = {
 // Documents API
 export const documentsAPI = {
   create: (data) => api.post('/documents', data),
+  upload: (formData) => api.post('/documents/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   list: (params = {}) => api.get('/documents', { params }),
   get: (id) => api.get(`/documents/${id}`),
   update: (id, data) => api.put(`/documents/${id}`, data),
+  updateSection: (docId, sectionId, data) => api.put(`/documents/${docId}/sections/${sectionId}`, data),
+  addMultimedia: (docId, sectionId, data) => api.post(`/documents/${docId}/sections/${sectionId}/multimedia`, data),
+  addInteractive: (docId, sectionId, data) => api.post(`/documents/${docId}/sections/${sectionId}/interactive`, data),
   delete: (id) => api.delete(`/documents/${id}`),
   getAnalytics: (id) => api.get(`/documents/${id}/analytics`),
   getComments: (id) => api.get(`/documents/${id}/comments`),
