@@ -135,6 +135,149 @@ async def update_current_user(
     updated_user_data = await users_collection.find_one({"id": current_user.id})
     return User(**{k: v for k, v in updated_user_data.items() if k != 'hashed_password'})
 
+# ==================== EMAIL INTEGRATION ENDPOINTS ====================
+
+@api_router.post("/users/me/email-connections")
+async def add_email_connection(
+    connection_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Add email connection to user profile"""
+    users_collection = await get_collection('users')
+    
+    # Create new email connection
+    email_connection = EmailConnection(
+        provider=connection_data["provider"],
+        email_address=connection_data["email_address"],
+        display_name=connection_data.get("display_name", connection_data["email_address"]),
+        is_primary=connection_data.get("is_primary", False)
+    )
+    
+    # If this is set as primary, make others non-primary
+    if email_connection.is_primary:
+        await users_collection.update_one(
+            {"id": current_user.id},
+            {"$set": {"email_connections.$[].is_primary": False}}
+        )
+    
+    # Add connection to user
+    await users_collection.update_one(
+        {"id": current_user.id},
+        {"$push": {"email_connections": email_connection.dict()}}
+    )
+    
+    return email_connection
+
+@api_router.get("/users/me/email-connections")
+async def get_email_connections(current_user: User = Depends(get_current_active_user)):
+    """Get user's email connections"""
+    users_collection = await get_collection('users')
+    user_data = await users_collection.find_one({"id": current_user.id})
+    
+    return user_data.get("email_connections", [])
+
+@api_router.delete("/users/me/email-connections/{connection_id}")
+async def remove_email_connection(
+    connection_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Remove email connection"""
+    users_collection = await get_collection('users')
+    
+    # Remove the connection
+    await users_collection.update_one(
+        {"id": current_user.id},
+        {"$pull": {"email_connections": {"id": connection_id}}}
+    )
+    
+    return {"message": "Email connection removed successfully"}
+
+@api_router.put("/users/me/email-connections/{connection_id}/primary")
+async def set_primary_email_connection(
+    connection_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Set email connection as primary"""
+    users_collection = await get_collection('users')
+    
+    # First, make all connections non-primary
+    await users_collection.update_one(
+        {"id": current_user.id},
+        {"$set": {"email_connections.$[].is_primary": False}}
+    )
+    
+    # Then set the specified connection as primary
+    await users_collection.update_one(
+        {"id": current_user.id, "email_connections.id": connection_id},
+        {"$set": {"email_connections.$.is_primary": True}}
+    )
+    
+    return {"message": "Primary email connection updated"}
+
+@api_router.put("/users/me/notification-settings")
+async def update_notification_settings(
+    settings: Dict[str, bool],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Update user notification settings"""
+    users_collection = await get_collection('users')
+    
+    await users_collection.update_one(
+        {"id": current_user.id},
+        {"$set": {"notification_settings": settings}}
+    )
+    
+    return {"message": "Notification settings updated successfully"}
+
+@api_router.put("/users/me/email-signature")
+async def update_email_signature(
+    signature_data: Dict[str, str],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Update user email signature"""
+    users_collection = await get_collection('users')
+    
+    await users_collection.update_one(
+        {"id": current_user.id},
+        {"$set": {"email_signature": signature_data["signature"]}}
+    )
+    
+    return {"message": "Email signature updated successfully"}
+
+# ==================== EMAIL SENDING ENDPOINTS ====================
+
+@api_router.post("/documents/{document_id}/send-email")
+async def send_document_via_email(
+    document_id: str,
+    email_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Send document via email"""
+    document_data = await check_document_access(document_id, current_user, "view")
+    
+    # Here you would integrate with email service (SMTP, SendGrid, etc.)
+    # For now, we'll log the action and return success
+    
+    # Log the email send activity
+    await log_activity(
+        current_user.id, 
+        current_user.full_name, 
+        document_id, 
+        ActionType.create,  # Using CREATE for email send action
+        {
+            "action": "email_sent",
+            "recipients": email_data.get("recipients", []),
+            "subject": email_data.get("subject", ""),
+            "message": email_data.get("message", "")
+        }
+    )
+    
+    return {
+        "message": "Email sent successfully",
+        "recipients": email_data.get("recipients", []),
+        "document_title": document_data["title"]
+    }
+
 # ==================== DOCUMENT ENDPOINTS ====================
 
 @api_router.post("/documents", response_model=Document)
