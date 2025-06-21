@@ -356,9 +356,7 @@ test_plan:
   current_focus:
     - "OpenAI Integration Service"
     - "AI RFP Generation API"
-  stuck_tasks:
-    - "OpenAI Integration Service"
-    - "AI RFP Generation API"
+  stuck_tasks: []
   test_all: true
   test_priority: "high_first"
 
