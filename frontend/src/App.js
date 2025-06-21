@@ -280,6 +280,18 @@ const Dashboard = () => {
     ).join(' ');
   };
 
+  const getTeamsByDepartment = () => {
+    const departmentTeams = {};
+    teamMembers.forEach(member => {
+      const dept = member.department || 'No Department';
+      if (!departmentTeams[dept]) {
+        departmentTeams[dept] = [];
+      }
+      departmentTeams[dept].push(member);
+    });
+    return departmentTeams;
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
