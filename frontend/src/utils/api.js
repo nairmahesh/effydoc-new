@@ -33,7 +33,14 @@ api.interceptors.response.use(
       window.location.href = '/login';
       toast.error('Session expired. Please login again.');
     } else if (error.response?.data?.detail) {
-      toast.error(error.response.data.detail);
+      // Check if detail is an array (Pydantic validation errors)
+      if (Array.isArray(error.response.data.detail)) {
+        // Extract the first error message
+        const firstError = error.response.data.detail[0];
+        toast.error(firstError.msg || 'Validation error');
+      } else {
+        toast.error(error.response.data.detail);
+      }
     } else {
       toast.error('An error occurred. Please try again.');
     }
