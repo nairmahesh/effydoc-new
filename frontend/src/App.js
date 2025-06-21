@@ -389,10 +389,23 @@ const Dashboard = () => {
                 </div>
                 <div className="space-y-3">
                   {teamMembers.map((member) => (
-                    <div key={member.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <h3 className="font-medium text-gray-900">{member.name}</h3>
-                        <p className="text-sm text-gray-600">{getRoleDisplay(member.role)}</p>
+                    <div key={member.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="flex-1">
+                        <button
+                          onClick={() => handleEmployeeClick(member)}
+                          className="text-left w-full hover:text-blue-600 transition-colors"
+                        >
+                          <h3 className="font-medium text-gray-900 hover:text-blue-600">{member.name}</h3>
+                          <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            <span>{getRoleDisplay(member.role)}</span>
+                            {member.department && (
+                              <>
+                                <span>•</span>
+                                <span>{member.department}</span>
+                              </>
+                            )}
+                          </div>
+                        </button>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-blue-600">{member.point_balance} pts</p>
