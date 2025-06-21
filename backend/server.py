@@ -318,7 +318,7 @@ async def upload_document(
     title: str = None,
     current_user: User = Depends(get_current_active_user)
 ):
-    """Upload a document file and convert it to editable format"""
+    """Upload a document file and convert it to page-wise editable format"""
     import os
     import PyPDF2
     import docx
@@ -333,43 +333,92 @@ async def upload_document(
         # Read file content
         content = await file.read()
         
-        # Extract text based on file type
-        extracted_text = ""
+        # Extract pages based on file type
+        pages = []
         if file.content_type == "application/pdf":
-            # Extract text from PDF
+            # Extract text from PDF page by page
             pdf_reader = PyPDF2.PdfReader(BytesIO(content))
-            for page in pdf_reader.pages:
-                extracted_text += page.extract_text() + "\n\n"
+            for page_num, page in enumerate(pdf_reader.pages, 1):
+                page_text = page.extract_text()
+                if page_text.strip():  # Only create page if there's content
+                    page_obj = DocumentPage(
+                        page_number=page_num,
+                        title=f"Page {page_num}",
+                        content=page_text.strip()
+                    )
+                    pages.append(page_obj)
         
         elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            # Extract text from DOCX
+            # Extract text from DOCX and split into pages
             doc = docx.Document(BytesIO(content))
+            page_content = []
+            words_per_page = 500  # Approximate words per page
+            current_words = 0
+            current_page_text = []
+            
             for paragraph in doc.paragraphs:
-                extracted_text += paragraph.text + "\n"
+                para_text = paragraph.text.strip()
+                if para_text:
+                    words_in_para = len(para_text.split())
+                    if current_words + words_in_para > words_per_page and current_page_text:
+                        # Create new page
+                        page_content.append('\n'.join(current_page_text))
+                        current_page_text = [para_text]
+                        current_words = words_in_para
+                    else:
+                        current_page_text.append(para_text)
+                        current_words += words_in_para
+            
+            # Add last page
+            if current_page_text:
+                page_content.append('\n'.join(current_page_text))
+            
+            # Create DocumentPage objects
+            for page_num, content_text in enumerate(page_content, 1):
+                page_obj = DocumentPage(
+                    page_number=page_num,
+                    title=f"Page {page_num}",
+                    content=content_text
+                )
+                pages.append(page_obj)
         
         elif file.content_type == "text/plain":
-            # Plain text file
-            extracted_text = content.decode('utf-8')
+            # Plain text file - split into pages by line count
+            text_content = content.decode('utf-8')
+            lines = text_content.split('\n')
+            lines_per_page = 50  # Approximate lines per page
+            
+            page_num = 1
+            for i in range(0, len(lines), lines_per_page):
+                page_lines = lines[i:i + lines_per_page]
+                page_text = '\n'.join(page_lines).strip()
+                if page_text:
+                    page_obj = DocumentPage(
+                        page_number=page_num,
+                        title=f"Page {page_num}",
+                        content=page_text
+                    )
+                    pages.append(page_obj)
+                    page_num += 1
         
-        # Create document sections from extracted content
+        # If no pages created, create a single page
+        if not pages:
+            page_obj = DocumentPage(
+                page_number=1,
+                title="Page 1",
+                content="Document content could not be extracted properly. Please edit this page."
+            )
+            pages.append(page_obj)
+        
+        # Create legacy sections for backward compatibility
         sections = []
-        paragraphs = [p.strip() for p in extracted_text.split('\n\n') if p.strip()]
-        
-        for i, paragraph in enumerate(paragraphs[:10]):  # Limit to first 10 paragraphs
-            if len(paragraph) > 20:  # Only include substantial paragraphs
-                sections.append(DocumentSection(
-                    title=f"Section {i+1}",
-                    content=paragraph,
-                    order=i+1
-                ))
-        
-        # If no substantial content found, create a single section
-        if not sections:
-            sections.append(DocumentSection(
-                title="Uploaded Content",
-                content=extracted_text[:1000] + "..." if len(extracted_text) > 1000 else extracted_text,
-                order=1
-            ))
+        for i, page in enumerate(pages):
+            section = DocumentSection(
+                title=page.title,
+                content=page.content,
+                order=i + 1
+            )
+            sections.append(section)
         
         # Create document
         documents_collection = await get_collection('documents')
@@ -379,14 +428,17 @@ async def upload_document(
             type=DocumentType.PROPOSAL,
             owner_id=current_user.id,
             organization=current_user.organization,
-            sections=sections,
+            sections=sections,  # Legacy support
+            pages=pages,  # New page-wise structure
+            total_pages=len(pages),
             collaborators=[],
-            tags=["uploaded", "imported"],
+            tags=["uploaded", "imported", "page-wise"],
             metadata={
                 "original_filename": file.filename,
                 "file_type": file.content_type,
                 "upload_method": "file_upload",
-                "extracted_sections": len(sections)
+                "total_pages": len(pages),
+                "processing_method": "page_wise_extraction"
             }
         )
         
@@ -401,14 +453,16 @@ async def upload_document(
             {
                 "title": document.title,
                 "upload_method": "file_upload",
-                "original_filename": file.filename
+                "original_filename": file.filename,
+                "total_pages": len(pages)
             }
         )
         
         return {
             "message": "Document uploaded and processed successfully",
             "document": document,
-            "sections_extracted": len(sections)
+            "total_pages": len(pages),
+            "processing_method": "page_wise_extraction"
         }
         
     except Exception as e:
