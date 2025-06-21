@@ -66,6 +66,17 @@ export const authAPI = {
   
   getCurrentUser: () => api.get('/users/me'),
   updateProfile: (data) => api.put('/users/me', data),
+  
+  // Email integration
+  getEmailConnections: () => api.get('/users/me/email-connections'),
+  addEmailConnection: (data) => api.post('/users/me/email-connections', data),
+  removeEmailConnection: (id) => api.delete(`/users/me/email-connections/${id}`),
+  setPrimaryEmail: (id) => api.put(`/users/me/email-connections/${id}/primary`),
+  updateNotifications: (settings) => api.put('/users/me/notification-settings', settings),
+  updateEmailSignature: (signature) => api.put('/users/me/email-signature', { signature }),
+  
+  // Make api available for direct use
+  api,
 };
 
 // Documents API
