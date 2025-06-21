@@ -210,18 +210,9 @@ class DocumentPlatformAPITest(unittest.TestCase):
             "document_id": self.test_document_id,
             "viewer_info": {
                 "ip_address": "192.168.1.1",
-                "user_agent": "Test User Agent",
-                "user_id": "test_user_id",
-                "user_name": "Test User"
+                "user_agent": "Test User Agent"
             },
-            "pages_viewed": [
-                {
-                    "page_number": 1,
-                    "time_spent": 60,
-                    "scroll_depth": 100.0,
-                    "interactions": []
-                }
-            ],
+            "pages_viewed": [],
             "total_time_spent": 60,
             "completed_viewing": True
         }
