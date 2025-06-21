@@ -202,19 +202,6 @@ const Dashboard = () => {
     return departmentTeams;
   };
 
-  const getTeamsByDepartment = () => {
-    const departmentTeams = {};
-    teamMembers.forEach(member => {
-      const dept = member.department || 'No Department';
-      if (!departmentTeams[dept]) {
-        departmentTeams[dept] = [];
-      }
-      departmentTeams[dept].push(member);
-    });
-    return departmentTeams;
-  };
-
-  const fetchDashboardData = async () => {
     try {
       const [statsRes, badgesRes] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
