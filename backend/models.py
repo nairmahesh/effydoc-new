@@ -37,6 +37,19 @@ class ActionType(str, Enum):
     DOWNLOAD = "download"
 
 # Base Models
+class EmailConnection(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    provider: str  # "gmail", "outlook", "yahoo", "other"
+    email_address: str
+    display_name: str
+    access_token: Optional[str] = None
+    refresh_token: Optional[str] = None
+    token_expires_at: Optional[datetime] = None
+    is_primary: bool = False
+    is_active: bool = True
+    connected_at: datetime = Field(default_factory=datetime.utcnow)
+    last_sync: Optional[datetime] = None
+
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: str
@@ -44,6 +57,15 @@ class User(BaseModel):
     role: UserRole = UserRole.EDITOR
     organization: str
     avatar_url: Optional[str] = None
+    email_connections: List[EmailConnection] = []
+    email_signature: Optional[str] = None
+    notification_settings: Dict[str, bool] = {
+        "email_notifications": True,
+        "document_shared": True,
+        "document_viewed": True,
+        "comment_added": True,
+        "mention_in_comment": True
+    }
     created_at: datetime = Field(default_factory=datetime.utcnow)
     last_login: Optional[datetime] = None
     is_active: bool = True
