@@ -152,7 +152,7 @@ const Profile = () => {
 
   const updateEmailSignature = async () => {
     try {
-      await authAPI.api.put('/users/me/email-signature', { signature: emailSignature });
+      await authAPI.updateEmailSignature(emailSignature);
       toast.success('Email signature updated successfully!');
     } catch (error) {
       console.error('Error updating email signature:', error);
