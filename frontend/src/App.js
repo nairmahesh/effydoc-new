@@ -893,6 +893,65 @@ const Dashboard = () => {
                           </div>
 
                           <div className="mt-3 flex space-x-2">
+                </div>
+              )}
+            </div>
+
+            {/* Team Members Modal */}
+            {selectedTeam && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white rounded-xl w-full max-w-4xl max-h-[80vh] overflow-y-auto">
+                  <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">{selectedTeam} Team</h3>
+                      <p className="text-sm text-gray-600">
+                        {getTeamsByDepartment()[selectedTeam]?.length} members
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setSelectedTeam(null)}
+                      className="text-gray-500 hover:text-gray-700 text-2xl"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {getTeamsByDepartment()[selectedTeam]?.map((member) => (
+                        <div key={member.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center mb-3">
+                            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                              <span className="text-white text-sm font-semibold">
+                                {member.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                              </span>
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-gray-900">{member.name}</h4>
+                              <p className="text-xs text-gray-600">{getRoleDisplay(member.role)}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-600">Points</span>
+                              <span className="font-semibold text-green-600">{member.point_balance}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-600">Status</span>
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                member.point_balance >= 100 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : member.point_balance >= 50 
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-gray-100 text-gray-800'
+                              }`}>
+                                {member.point_balance >= 100 ? 'Excellent' : member.point_balance >= 50 ? 'Good' : 'Growing'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mt-3 flex space-x-2">
                   </div>
                 </div>
               )}
