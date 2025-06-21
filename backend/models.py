@@ -91,6 +91,8 @@ class MultimediaElement(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     duration: Optional[int] = None  # in seconds for video/audio
+    position: Dict[str, float] = {"x": 0.5, "y": 0.5}  # Position on page (0-1 coordinates)
+    size: Dict[str, str] = {"width": "200px", "height": "150px"}
 
 class InteractiveElement(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -98,7 +100,18 @@ class InteractiveElement(BaseModel):
     label: str
     action: Optional[str] = None
     required: bool = False
-    position: Dict[str, float]  # {"x": 0.5, "y": 0.3, "page": 1}
+    position: Dict[str, float] = {"x": 0.5, "y": 0.3}  # Position on page (0-1 coordinates)
+    size: Dict[str, str] = {"width": "120px", "height": "40px"}
+
+class DocumentPage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    page_number: int
+    title: str = ""
+    content: str
+    multimedia_elements: List[MultimediaElement] = []
+    interactive_elements: List[InteractiveElement] = []
+    page_background: Optional[str] = None  # background image or color
+    page_size: Dict[str, str] = {"width": "8.5in", "height": "11in"}  # Standard letter size
 
 class DocumentSection(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -114,6 +127,7 @@ class Comment(BaseModel):
     user_id: str
     user_name: str
     content: str
+    page_number: Optional[int] = None  # Page-specific comments
     section_id: Optional[str] = None  # null for document-level comments
     position: Optional[Dict[str, float]] = None  # for inline comments
     timestamp: datetime = Field(default_factory=datetime.utcnow)
@@ -135,6 +149,8 @@ class Document(BaseModel):
     owner_id: str
     organization: str
     sections: List[DocumentSection] = []
+    pages: List[DocumentPage] = []  # New: Page-wise structure
+    total_pages: int = 0
     collaborators: List[Dict[str, str]] = []  # [{"user_id": "...", "role": "editor"}]
     comments: List[Comment] = []
     versions: List[DocumentVersion] = []
