@@ -672,6 +672,99 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user)):
     
     return stats
 
+# Task routes
+@api_router.post("/tasks", response_model=Task)
+async def create_task(task_data: TaskCreate, current_user: User = Depends(get_current_user)):
+    """Create a new task"""
+    # Check if current user is a manager or admin
+    if current_user.role not in [UserRole.MANAGER, UserRole.COMPANY_ADMIN]:
+        raise HTTPException(status_code=403, detail="Only managers can create tasks")
+    
+    # Create task
+    task = Task(
+        title=task_data.title,
+        description=task_data.description,
+        points_reward=task_data.points_reward,
+        company_id=current_user.company_id,
+        created_by=current_user.id
+    )
+    
+    await db.tasks.insert_one(task.dict())
+    
+    return task
+
+@api_router.get("/tasks")
+async def get_tasks(current_user: User = Depends(get_current_user)):
+    """Get tasks for current user's company"""
+    # Get tasks for the company
+    tasks = await db.tasks.find({
+        "company_id": current_user.company_id,
+        "is_active": True
+    }).sort("created_at", -1).to_list(100)
+    
+    # Populate creator names and handle ObjectId
+    result = []
+    for task in tasks:
+        if "_id" in task and isinstance(task["_id"], ObjectId):
+            task["_id"] = str(task["_id"])
+        
+        creator = await db.users.find_one({"id": task["created_by"]})
+        task["created_by_name"] = creator.get("name", "Unknown") if creator else "Unknown"
+        result.append(task)
+    
+    return result
+
+@api_router.post("/tasks/{task_id}/complete")
+async def complete_task(task_id: str, current_user: User = Depends(get_current_user)):
+    """Mark task as completed and award points"""
+    # Get the task
+    task_data = await db.tasks.find_one({"id": task_id})
+    if not task_data:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    task = Task(**task_data)
+    
+    # Check if task is from same company
+    if task.company_id != current_user.company_id:
+        raise HTTPException(status_code=403, detail="Can only complete tasks from same company")
+    
+    # Check if task is still active
+    if not task.is_active:
+        raise HTTPException(status_code=400, detail="Task is no longer active")
+    
+    # Check if user already completed this task
+    existing_completion = await db.point_transactions.find_one({
+        "to_user_id": current_user.id,
+        "transaction_type": "task_completion",
+        "reason": f"Task completed: {task.title}"
+    })
+    
+    if existing_completion:
+        raise HTTPException(status_code=400, detail="You have already completed this task")
+    
+    # Create point transaction for task completion
+    transaction = PointTransaction(
+        from_user_id=task.created_by,
+        to_user_id=current_user.id,
+        amount=task.points_reward,
+        reason=f"Task completed: {task.title}",
+        company_id=current_user.company_id,
+        transaction_type="task_completion"
+    )
+    
+    await db.point_transactions.insert_one(transaction.dict())
+    
+    # Update user's points
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$inc": {"point_balance": task.points_reward}}
+    )
+    
+    # Check and award badges
+    await check_and_award_badges(current_user.id, current_user.company_id)
+    
+    return {"message": "Task completed successfully", "points_awarded": task.points_reward}
+
 # Include the router in the main app
 app.include_router(api_router)
 
