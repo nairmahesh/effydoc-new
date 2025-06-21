@@ -460,8 +460,16 @@ async def get_user_badges(current_user: User = Depends(get_current_user)):
     # Populate badge details
     badges_with_details = []
     for user_badge in user_badges:
+        # Convert _id to string if it exists
+        if "_id" in user_badge and isinstance(user_badge["_id"], ObjectId):
+            user_badge["_id"] = str(user_badge["_id"])
+            
         badge = await db.badges.find_one({"id": user_badge["badge_id"]})
         if badge:
+            # Convert badge _id to string if it exists
+            if "_id" in badge and isinstance(badge["_id"], ObjectId):
+                badge["_id"] = str(badge["_id"])
+                
             badges_with_details.append({
                 "earned_at": user_badge["earned_at"],
                 "badge": badge
