@@ -260,6 +260,24 @@ backend:
       - working: true
         agent: "testing"
         comment: "Verified comment creation and retrieval endpoints work correctly"
+        
+  - task: "Email Integration Functionality"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Implemented email integration with connection management, notification settings, and email signature"
+      - working: false
+        agent: "testing"
+        comment: "Found an issue in the send_document_via_email function where it was using ActionType.create instead of ActionType.CREATE"
+      - working: true
+        agent: "testing"
+        comment: "Fixed the issue in the send_document_via_email function. All email integration endpoints are now working correctly, including adding/removing email connections, setting primary email, updating notification settings, updating email signature, and sending documents via email."
 
 frontend:
   - task: "API Integration Layer"
@@ -354,8 +372,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "OpenAI Integration Service"
-    - "AI RFP Generation API"
+    - "Email Integration Functionality"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
@@ -369,3 +386,5 @@ agent_communication:
     message: "Fixed the OpenAI integration issue by modifying the initialize_client method in openai_service.py to explicitly load environment variables from the .env file. Comprehensive testing confirms that the AI RFP generation endpoint is now working correctly. The endpoint returns properly structured JSON with all required sections, and the generated content is industry-appropriate and includes most of the specified deliverables and requirements. Both the OpenAI Integration Service and AI RFP Generation API are now working correctly."
   - agent: "testing"
     message: "Completed final comprehensive testing of all backend API endpoints. All tests are now passing successfully, including the AI RFP generation and document performance analysis. The OpenAI integration is working correctly, and the AI RFP generation endpoint is producing high-quality, structured content as expected. The fix involved explicitly loading environment variables from the .env file in the OpenAI service initialization method. All backend functionality is now working as expected."
+  - agent: "testing"
+    message: "Completed comprehensive testing of the email integration functionality. Found and fixed an issue in the send_document_via_email function where it was using ActionType.create instead of ActionType.CREATE. After fixing this issue, all email integration endpoints are now working correctly. Successfully tested adding multiple email connections, setting primary email, removing connections, updating notification settings, updating email signature, and sending documents via email. All tests are passing with no errors."
