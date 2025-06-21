@@ -59,13 +59,11 @@ class DocumentPlatformAPITest(unittest.TestCase):
         
     def test_04_user_login(self):
         """Test user login"""
-        # For login, we need to use JSON body instead of params
-        login_data = {
-            "email": self.test_user_email,
-            "password": self.test_user_password
-        }
-        
-        response = requests.post(f"{self.base_url}/auth/login", json=login_data)
+        # For login, we need to use query parameters
+        response = requests.post(
+            f"{self.base_url}/auth/login",
+            params={"email": self.test_user_email, "password": self.test_user_password}
+        )
         self.assertEqual(response.status_code, 200)
         data = response.json()
         
