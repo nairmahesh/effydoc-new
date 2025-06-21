@@ -141,7 +141,7 @@ const Profile = () => {
 
   const updateNotificationSettings = async (newSettings) => {
     try {
-      await authAPI.api.put('/users/me/notification-settings', newSettings);
+      await authAPI.updateNotifications(newSettings);
       setNotificationSettings(newSettings);
       toast.success('Notification settings updated successfully!');
     } catch (error) {
