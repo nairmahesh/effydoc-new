@@ -361,6 +361,11 @@ async def give_points(
         if recipient.get("manager_id") != current_user.id:
             raise HTTPException(status_code=403, detail="Can only give points to direct reports")
     
+    # Company admins can only give points to managers, not to regular employees
+    if current_user.role == UserRole.COMPANY_ADMIN:
+        if recipient.get("role") not in [UserRole.MANAGER.value]:
+            raise HTTPException(status_code=403, detail="Company admins can only give points to managers")
+    
     # Check if manager has enough points in cap
     if current_user.point_cap < transaction_data.amount:
         raise HTTPException(status_code=400, detail="Insufficient point cap")
