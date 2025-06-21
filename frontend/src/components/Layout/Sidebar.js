@@ -10,6 +10,7 @@ import {
   HomeIcon,
   DocumentDuplicateIcon,
   EyeIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 
 const Sidebar = ({ isOpen, onClose }) => {
