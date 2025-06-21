@@ -1119,9 +1119,167 @@ const Dashboard = () => {
           </div>
         </>
       )}
+
+      {/* Create Task Modal */}
+      {showCreateTask && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Create New Task</h2>
+            <form onSubmit={handleCreateTask} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Task Title
+                </label>
+                <input
+                  type="text"
+                  value={taskTitle}
+                  onChange={(e) => setTaskTitle(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Enter task title"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Describe what needs to be done..."
+                  rows="3"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Points Reward
+                </label>
+                <input
+                  type="number"
+                  value={taskPoints}
+                  onChange={(e) => setTaskPoints(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Points to award upon completion"
+                  min="1"
+                  max="100"
+                  required
+                />
+              </div>
+
+              <div className="bg-purple-50 p-3 rounded-lg">
+                <div className="flex items-center">
+                  <span className="text-purple-600 mr-2">💡</span>
+                  <p className="text-sm text-purple-700">
+                    Tasks help motivate employees and provide clear goals with reward incentives.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateTask(false)}
+                  className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-purple-500 text-white py-3 px-4 rounded-lg hover:bg-purple-600 transition-colors"
+                >
+                  Create Task
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Manage Rewards Modal */}
+      {showManageRewards && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-2xl">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Manage Rewards & Recognition</h2>
+              <button
+                onClick={() => setShowManageRewards(false)}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-6">
+              {/* Recognition Programs */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-900 mb-3">🎯 Recognition Programs</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <h4 className="font-medium text-blue-900">Employee of the Month</h4>
+                    <p className="text-sm text-blue-700 mt-1">Special recognition program</p>
+                    <button className="mt-2 text-blue-600 text-sm hover:underline">Configure →</button>
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <h4 className="font-medium text-green-900">Team Achievement</h4>
+                    <p className="text-sm text-green-700 mt-1">Group milestone rewards</p>
+                    <button className="mt-2 text-green-600 text-sm hover:underline">Configure →</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Milestone Rewards */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-900 mb-3">🏆 Milestone Rewards</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <span className="font-medium">100 Points Milestone</span>
+                      <p className="text-sm text-gray-600">Special badge + bonus recognition</p>
+                    </div>
+                    <span className="text-green-600 font-semibold">Active</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <span className="font-medium">500 Points Milestone</span>
+                      <p className="text-sm text-gray-600">Elite status + premium rewards</p>
+                    </div>
+                    <span className="text-green-600 font-semibold">Active</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-900 mb-3">⚡ Quick Actions</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <button className="p-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+                    <span className="block font-medium">Bulk Recognition</span>
+                    <span className="text-sm">Reward entire team</span>
+                  </button>
+                  <button className="p-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 transition-colors">
+                    <span className="block font-medium">Custom Badge</span>
+                    <span className="text-sm">Create special badge</span>
+                  </button>
+                  <button className="p-3 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
+                    <span className="block font-medium">Performance Review</span>
+                    <span className="text-sm">Schedule review cycle</span>
+                  </button>
+                  <button className="p-3 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <span className="block font-medium">Team Challenge</span>
+                    <span className="text-sm">Create group goal</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
 
 // Main App Component
 function App() {
