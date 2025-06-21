@@ -528,7 +528,7 @@ const Dashboard = () => {
           ></div>
           
           {/* Side Panel */}
-          <div className="fixed top-0 right-0 h-full w-full md:w-2/3 lg:w-1/2 xl:w-2/5 bg-white z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto">
+          <div className="fixed top-0 right-0 h-full w-full md:w-4/5 lg:w-3/5 xl:w-1/2 bg-white z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto">
             {/* Header */}
             <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center shadow-sm">
               <div>
