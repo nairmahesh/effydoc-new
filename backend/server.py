@@ -13,6 +13,16 @@ from datetime import datetime, timedelta
 import jwt
 import bcrypt
 from enum import Enum
+from bson import ObjectId
+from fastapi.encoders import jsonable_encoder
+
+# Custom JSON encoder to handle ObjectId
+class CustomJSONEncoder:
+    @staticmethod
+    def default(obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
