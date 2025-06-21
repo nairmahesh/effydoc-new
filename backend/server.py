@@ -77,6 +77,7 @@ class UserCreate(BaseModel):
     role: UserRole
     company_id: Optional[str] = None
     manager_id: Optional[str] = None
+    department: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: str
