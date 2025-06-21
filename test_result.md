@@ -276,9 +276,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Role-based authentication UI"
-    - "Manager dashboard with point giving"
-    - "Employee dashboard with badges"
+    - "360-degree employee profile view"
+    - "Department field for employees"
+    - "Multi-role authentication system with JWT"
+    - "Point distribution system with caps"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
