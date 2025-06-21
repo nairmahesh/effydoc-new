@@ -152,9 +152,9 @@ backend:
 
   - task: "OpenAI Integration Service"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/openai_service.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -164,6 +164,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "OpenAI API key is not being loaded properly. The API key is in the .env file but not being recognized by the application."
+      - working: true
+        agent: "testing"
+        comment: "Fixed OpenAI API key loading by modifying the initialize_client method to explicitly load environment variables from the .env file. The OpenAI client is now initializing correctly."
 
   - task: "Main API Server with All Endpoints"
     implemented: true
