@@ -215,9 +215,9 @@ backend:
 
   - task: "AI RFP Generation API"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -227,6 +227,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "AI RFP generation endpoint returns a 500 error due to OpenAI API key not being loaded properly"
+      - working: true
+        agent: "testing"
+        comment: "After fixing the OpenAI service initialization, the AI RFP generation endpoint is now working correctly. Comprehensive testing confirms that the endpoint returns properly structured JSON with all required sections. The generated content is industry-appropriate and includes most of the specified deliverables and requirements."
 
   - task: "Document Analytics and Tracking"
     implemented: true
