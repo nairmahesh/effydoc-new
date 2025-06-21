@@ -389,100 +389,85 @@ const Dashboard = () => {
             <h2 className="text-xl font-bold text-gray-900 mb-4">Your Badges</h2>
             {badges.length > 0 ? (
               <div className="grid grid-cols-2 gap-4">
-                {badges.map((userBadge, index) => (
-                  <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-3xl mb-2">{userBadge.badge.icon}</div>
-                    <h3 className="font-semibold text-gray-900">{userBadge.badge.name}</h3>
-                    <p className="text-sm text-gray-600">{userBadge.badge.description}</p>
+                {badges.slice(0, 4).map((userBadge, index) => (
+                  <div key={index} className="text-center p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg hover:shadow-md transition-all">
+                    <div className="text-2xl mb-2">{userBadge.badge.icon}</div>
+                    <h3 className="font-semibold text-gray-900 text-sm">{userBadge.badge.name}</h3>
+                    <p className="text-xs text-gray-600 mt-1">{userBadge.badge.description}</p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Earned {new Date(userBadge.earned_at).toLocaleDateString()}
+                      {new Date(userBadge.earned_at).toLocaleDateString()}
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-8">No badges earned yet. Keep up the great work!</p>
+              <div className="text-center py-6">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-2xl">🏆</span>
+                </div>
+                <p className="text-gray-500">No badges earned yet. Keep up the great work!</p>
+              </div>
+            )}
+            {badges.length > 4 && (
+              <div className="mt-4 text-center">
+                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                  View all {badges.length} badges →
+                </button>
+              </div>
             )}
           </div>
 
-          {/* Team Members / Recent Transactions */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border">
-            {(user.role === 'manager' || user.role === 'company_admin') ? (
-              <>
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Manager Dashboard</h2>
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={() => setShowCreateTask(true)}
-                      className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center space-x-2"
-                    >
-                      <span>📋</span>
-                      <span>Create Task</span>
-                    </button>
-                    <button
-                      onClick={() => setShowGivePoints(true)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
-                    >
-                      <span>✨</span>
-                      <span>Give Points</span>
-                    </button>
-                    <button
-                      onClick={() => setShowManageRewards(true)}
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
-                    >
-                      <span>🏆</span>
-                      <span>Manage Rewards</span>
-                    </button>
+          {/* Manager Dashboard */}
+          {(user.role === 'manager' || user.role === 'company_admin') ? (
+            <div className="space-y-6">
+              {/* Manager Action Cards */}
+              <div className="grid grid-cols-1 gap-4">
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold">Quick Recognition</h3>
+                      <p className="text-blue-100 text-sm mt-1">Instantly reward great work</p>
+                    </div>
+                    <span className="text-3xl">⚡</span>
                   </div>
+                  <button
+                    onClick={() => setShowGivePoints(true)}
+                    className="mt-4 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+                  >
+                    Give Points Now
+                  </button>
                 </div>
 
-                {/* Manager Action Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold">Quick Recognition</h3>
-                        <p className="text-blue-100 text-sm mt-1">Instantly reward great work</p>
-                      </div>
-                      <span className="text-3xl">⚡</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-4 text-white">
+                    <div className="text-center">
+                      <span className="text-2xl block mb-2">🎯</span>
+                      <h3 className="font-semibold">Task Management</h3>
+                      <p className="text-purple-100 text-xs mt-1">Create challenges</p>
+                      <button
+                        onClick={() => setShowCreateTask(true)}
+                        className="mt-3 bg-white text-purple-600 px-3 py-1.5 rounded-lg hover:bg-purple-50 transition-colors text-sm font-medium"
+                      >
+                        Create Task
+                      </button>
                     </div>
-                    <button
-                      onClick={() => setShowGivePoints(true)}
-                      className="mt-4 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium"
-                    >
-                      Give Points Now
-                    </button>
                   </div>
 
-                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold">Task Management</h3>
-                        <p className="text-purple-100 text-sm mt-1">Create engaging challenges</p>
-                      </div>
-                      <span className="text-3xl">🎯</span>
+                  <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-4 text-white">
+                    <div className="text-center">
+                      <span className="text-2xl block mb-2">📊</span>
+                      <h3 className="font-semibold">Team Analytics</h3>
+                      <p className="text-green-100 text-xs mt-1">Track performance</p>
+                      <button
+                        onClick={() => setShowManageRewards(true)}
+                        className="mt-3 bg-white text-green-600 px-3 py-1.5 rounded-lg hover:bg-green-50 transition-colors text-sm font-medium"
+                      >
+                        View Analytics
+                      </button>
                     </div>
-                    <button
-                      onClick={() => setShowCreateTask(true)}
-                      className="mt-4 bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors font-medium"
-                    >
-                      Create Task
-                    </button>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold">Team Analytics</h3>
-                        <p className="text-green-100 text-sm mt-1">Track team performance</p>
-                      </div>
-                      <span className="text-3xl">📊</span>
-                    </div>
-                    <button className="mt-4 bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors font-medium">
-                      View Analytics
-                    </button>
                   </div>
                 </div>
+              </div>
                 
                 {/* Enhanced Team Members Table */}
                 <div className="bg-white rounded-xl shadow-sm border overflow-hidden mb-6">
