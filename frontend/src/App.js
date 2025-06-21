@@ -380,41 +380,145 @@ const Dashboard = () => {
           <div className="bg-white rounded-xl p-6 shadow-sm border">
             {(user.role === 'manager' || user.role === 'company_admin') ? (
               <>
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Team Members</h2>
                   <button
                     onClick={() => setShowGivePoints(true)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
                   >
-                    Give Points
+                    <span>✨</span>
+                    <span>Give Points</span>
                   </button>
                 </div>
-                <div className="space-y-3">
-                  {teamMembers.map((member) => (
-                    <div key={member.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className="flex-1">
-                        <button
-                          onClick={() => handleEmployeeClick(member)}
-                          className="text-left w-full hover:text-blue-600 transition-colors"
-                        >
-                          <h3 className="font-medium text-gray-900 hover:text-blue-600">{member.name}</h3>
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <span>{getRoleDisplay(member.role)}</span>
-                            {member.department && (
-                              <>
-                                <span>•</span>
-                                <span>{member.department}</span>
-                              </>
-                            )}
-                          </div>
-                        </button>
+                
+                {/* Enhanced Team Members Table */}
+                <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                  {teamMembers.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                            <th className="text-left py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">EMPLOYEE</th>
+                            <th className="text-left py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">DEPARTMENT</th>
+                            <th className="text-center py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">POINTS</th>
+                            <th className="text-center py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">ACTION</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {teamMembers.map((member, index) => (
+                            <tr 
+                              key={member.id} 
+                              className={`border-b border-gray-100 hover:bg-blue-50 transition-all duration-200 cursor-pointer ${
+                                index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
+                              }`}
+                              onClick={() => handleEmployeeClick(member)}
+                            >
+                              <td className="py-4 px-6">
+                                <div className="flex items-center">
+                                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                                    <span className="text-white text-sm font-semibold">
+                                      {member.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                                      {member.name}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                      {getRoleDisplay(member.role)}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-6">
+                                <div className="flex items-center">
+                                  {member.department ? (
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                      {member.department}
+                                    </span>
+                                  ) : (
+                                    <span className="text-gray-400 text-xs">No department</span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-4 px-6 text-center">
+                                <div className="flex items-center justify-center">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                                    <span className="text-green-600 mr-1">💎</span>
+                                    {member.point_balance}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="py-4 px-6 text-center">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEmployeeClick(member);
+                                  }}
+                                  className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                                >
+                                  <span className="mr-1">👁️</span>
+                                  View Profile
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-16">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-2xl">👥</span>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-blue-600">{member.point_balance} pts</p>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No team members</h3>
+                      <p className="text-gray-500">Add team members to start giving recognition.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Team Stats */}
+                {teamMembers.length > 0 && (
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white rounded-lg p-4 border">
+                      <div className="flex items-center">
+                        <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                          <span className="text-blue-600 text-lg">👥</span>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold text-gray-900">{teamMembers.length}</div>
+                          <div className="text-sm text-gray-500">Team Members</div>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="bg-white rounded-lg p-4 border">
+                      <div className="flex items-center">
+                        <div className="p-2 bg-green-100 rounded-lg mr-3">
+                          <span className="text-green-600 text-lg">💎</span>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold text-gray-900">
+                            {teamMembers.reduce((sum, member) => sum + member.point_balance, 0)}
+                          </div>
+                          <div className="text-sm text-gray-500">Total Points</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border">
+                      <div className="flex items-center">
+                        <div className="p-2 bg-purple-100 rounded-lg mr-3">
+                          <span className="text-purple-600 text-lg">⭐</span>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold text-gray-900">
+                            {Math.round(teamMembers.reduce((sum, member) => sum + member.point_balance, 0) / teamMembers.length) || 0}
+                          </div>
+                          <div className="text-sm text-gray-500">Avg Points</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
               <>
