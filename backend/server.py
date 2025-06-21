@@ -463,6 +463,134 @@ async def get_team_members(current_user: User = Depends(get_current_user)):
     
     return result
 
+@api_router.get("/users/{user_id}/profile")
+async def get_employee_profile(user_id: str, current_user: User = Depends(get_current_user)):
+    """Get comprehensive 360-degree employee profile"""
+    
+    # Check if current user has permission to view this profile
+    if current_user.role not in [UserRole.MANAGER, UserRole.COMPANY_ADMIN, UserRole.SUPER_ADMIN]:
+        if current_user.id != user_id:
+            raise HTTPException(status_code=403, detail="Insufficient permissions")
+    
+    # Get the employee
+    employee_data = await db.users.find_one({"id": user_id})
+    if not employee_data:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    # Remove password field
+    employee_data.pop("password", None)
+    if "_id" in employee_data and isinstance(employee_data["_id"], ObjectId):
+        employee_data["_id"] = str(employee_data["_id"])
+    
+    employee = User(**employee_data)
+    
+    # Check if employee is in same company (except for super admin)
+    if current_user.role != UserRole.SUPER_ADMIN:
+        if employee.company_id != current_user.company_id:
+            raise HTTPException(status_code=403, detail="Can only view employees in same company")
+    
+    # For managers, check if this employee is a direct report
+    if current_user.role == UserRole.MANAGER:
+        if employee.manager_id != current_user.id and employee.id != current_user.id:
+            raise HTTPException(status_code=403, detail="Can only view direct reports or own profile")
+    
+    # Get manager info
+    manager_info = None
+    if employee.manager_id:
+        manager_data = await db.users.find_one({"id": employee.manager_id})
+        if manager_data:
+            manager_info = {
+                "id": manager_data["id"],
+                "name": manager_data["name"],
+                "email": manager_data["email"]
+            }
+    
+    # Get company info
+    company_info = None
+    if employee.company_id:
+        company_data = await db.companies.find_one({"id": employee.company_id})
+        if company_data:
+            company_info = {
+                "id": company_data["id"],
+                "name": company_data["name"],
+                "point_name": company_data["point_name"]
+            }
+    
+    # Get all point transactions for this employee
+    point_transactions = await db.point_transactions.find({
+        "to_user_id": user_id
+    }).sort("created_at", -1).to_list(100)
+    
+    # Populate sender names and handle ObjectId
+    for transaction in point_transactions:
+        if "_id" in transaction and isinstance(transaction["_id"], ObjectId):
+            transaction["_id"] = str(transaction["_id"])
+        
+        from_user = await db.users.find_one({"id": transaction["from_user_id"]})
+        transaction["from_user_name"] = from_user.get("name", "Unknown") if from_user else "Unknown"
+        transaction["from_user_role"] = from_user.get("role", "Unknown") if from_user else "Unknown"
+    
+    # Get all badges earned by this employee
+    user_badges = await db.user_badges.find({"user_id": user_id}).sort("earned_at", -1).to_list(100)
+    
+    badges_with_details = []
+    for user_badge in user_badges:
+        if "_id" in user_badge and isinstance(user_badge["_id"], ObjectId):
+            user_badge["_id"] = str(user_badge["_id"])
+        
+        badge = await db.badges.find_one({"id": user_badge["badge_id"]})
+        if badge:
+            if "_id" in badge and isinstance(badge["_id"], ObjectId):
+                badge["_id"] = str(badge["_id"])
+            
+            badges_with_details.append({
+                "earned_at": user_badge["earned_at"],
+                "badge": badge,
+                "awarded_by": user_badge.get("awarded_by")
+            })
+    
+    # Calculate points statistics
+    total_points_received = sum(t["amount"] for t in point_transactions)
+    points_by_month = {}
+    recognition_count = len(point_transactions)
+    
+    # Group transactions by month for analytics
+    for transaction in point_transactions:
+        month_key = transaction["created_at"].strftime("%Y-%m")
+        if month_key not in points_by_month:
+            points_by_month[month_key] = 0
+        points_by_month[month_key] += transaction["amount"]
+    
+    # Get recognition reasons breakdown
+    recognition_reasons = {}
+    for transaction in point_transactions:
+        reason = transaction.get("reason", "No reason provided")
+        if reason not in recognition_reasons:
+            recognition_reasons[reason] = {"count": 0, "total_points": 0}
+        recognition_reasons[reason]["count"] += 1
+        recognition_reasons[reason]["total_points"] += transaction["amount"]
+    
+    # Create comprehensive profile
+    profile = {
+        "employee": employee_data,
+        "manager": manager_info,
+        "company": company_info,
+        "statistics": {
+            "total_points_received": total_points_received,
+            "current_balance": employee.point_balance,
+            "badges_earned": len(badges_with_details),
+            "recognition_count": recognition_count,
+            "points_by_month": points_by_month,
+            "recognition_reasons": recognition_reasons
+        },
+        "point_transactions": point_transactions,
+        "badges": badges_with_details,
+        "recent_achievements": badges_with_details[:5],  # Last 5 badges
+        "recent_recognition": point_transactions[:10]    # Last 10 recognitions
+    }
+    
+    return profile
+
 @api_router.get("/users/badges")
 async def get_user_badges(current_user: User = Depends(get_current_user)):
     """Get badges earned by current user"""
