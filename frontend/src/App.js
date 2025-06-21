@@ -221,19 +221,7 @@ const Dashboard = () => {
     }
   };
 
-  const getTeamsByDepartment = () => {
-    const departmentTeams = {};
-    teamMembers.forEach(member => {
-      const dept = member.department || 'No Department';
-      if (!departmentTeams[dept]) {
-        departmentTeams[dept] = [];
-      }
-      departmentTeams[dept].push(member);
-    });
-    return departmentTeams;
-  };
 
-  const handleEmployeeClick = (employee) => {
     setActiveTab('overview'); // Reset to overview tab when opening new profile
     fetchEmployeeProfile(employee.id);
   };
