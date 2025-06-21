@@ -125,7 +125,7 @@ const Profile = () => {
 
   const setPrimaryEmailConnection = async (connectionId) => {
     try {
-      await authAPI.api.put(`/users/me/email-connections/${connectionId}/primary`);
+      await authAPI.setPrimaryEmail(connectionId);
       setEmailConnections(
         emailConnections.map(conn => ({
           ...conn,
