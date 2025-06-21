@@ -89,6 +89,7 @@ export const documentsAPI = {
   getAnalytics: (id) => api.get(`/documents/${id}/analytics`),
   getComments: (id) => api.get(`/documents/${id}/comments`),
   addComment: (id, data) => api.post(`/documents/${id}/comments`, data),
+  sendEmail: (id, emailData) => api.post(`/documents/${id}/send-email`, emailData),
 };
 
 // AI API
