@@ -275,22 +275,14 @@ def test_backend_api():
     
     # 15. Test document performance analysis
     print("\n15. Testing document performance analysis...")
-    try:
-        response = requests.post(f"{base_url}/ai/analyze-document/{test_document_id}", headers=headers)
-        if response.status_code == 500:
-            print("⚠️ Document performance analysis failed with server error (likely OpenAI API key issue)")
-            print("This is expected if the OpenAI API key is not properly configured")
-        else:
-            assert response.status_code == 200, f"Expected 200, got {response.status_code}"
-            data = response.json()
-            
-            # Verify analysis response
-            assert "recommendations" in data, "Missing recommendations in response"
-            assert "performance_data" in data, "Missing performance_data in response"
-            print("✅ Document performance analysis working")
-    except Exception as e:
-        print(f"⚠️ Document performance analysis test failed: {e}")
-        print("This is likely due to OpenAI API key configuration issues")
+    response = requests.post(f"{base_url}/ai/analyze-document/{test_document_id}", headers=headers)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    data = response.json()
+    
+    # Verify analysis response
+    assert "recommendations" in data, "Missing recommendations in response"
+    assert "performance_data" in data, "Missing performance_data in response"
+    print("✅ Document performance analysis working")
     
     # 16. Test document deletion
     print("\n16. Testing document deletion...")
