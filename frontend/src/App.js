@@ -110,6 +110,7 @@ function App() {
               <Route path="templates" element={<Documents />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="activity" element={<Analytics />} />
+              <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
             </Route>
 
