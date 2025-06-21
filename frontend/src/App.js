@@ -749,43 +749,122 @@ const Dashboard = () => {
                 {activeTab === 'history' && (
                   <div className="bg-gray-50 rounded-xl p-4">
                     <h3 className="text-lg font-bold text-gray-900 mb-4">Complete Recognition History</h3>
-                    <div className="bg-white rounded-lg overflow-hidden">
+                    <div className="bg-white rounded-xl shadow-sm overflow-hidden border">
                       <div className="max-h-96 overflow-y-auto">
-                        <table className="w-full text-sm">
-                          <thead className="bg-gray-100 sticky top-0">
-                            <tr>
-                              <th className="text-left py-3 px-3 font-semibold">Date</th>
-                              <th className="text-left py-3 px-3 font-semibold">From</th>
-                              <th className="text-left py-3 px-3 font-semibold">Points</th>
-                              <th className="text-left py-3 px-3 font-semibold">Reason</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {selectedEmployeeProfile.point_transactions.map((transaction, index) => (
-                              <tr key={index} className="border-b hover:bg-gray-50">
-                                <td className="py-3 px-3">{formatDate(transaction.created_at)}</td>
-                                <td className="py-3 px-3">{transaction.from_user_name}</td>
-                                <td className="py-3 px-3">
-                                  <span className="text-green-600 font-medium">+{transaction.amount}</span>
-                                </td>
-                                <td className="py-3 px-3">
-                                  <div className="max-w-xs truncate" title={transaction.reason}>
-                                    {transaction.reason}
-                                  </div>
-                                </td>
+                        {selectedEmployeeProfile.point_transactions.length > 0 ? (
+                          <table className="w-full">
+                            <thead>
+                              <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                                <th className="text-left py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">DATE</th>
+                                <th className="text-left py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">FROM</th>
+                                <th className="text-center py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">POINTS</th>
+                                <th className="text-left py-4 px-6 font-semibold text-gray-700 text-sm tracking-wide">REASON</th>
                               </tr>
-                            ))}
-                            {selectedEmployeeProfile.point_transactions.length === 0 && (
-                              <tr>
-                                <td colSpan="4" className="text-center py-8 text-gray-500">
-                                  No recognition history available
-                                </td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {selectedEmployeeProfile.point_transactions.map((transaction, index) => (
+                                <tr 
+                                  key={index} 
+                                  className={`border-b border-gray-100 hover:bg-blue-50 transition-colors duration-200 ${
+                                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
+                                  }`}
+                                >
+                                  <td className="py-4 px-6">
+                                    <div className="flex items-center">
+                                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                                      <div>
+                                        <div className="text-sm font-medium text-gray-900">
+                                          {formatDate(transaction.created_at)}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                          {new Date(transaction.created_at).toLocaleTimeString('en-US', {
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                          })}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="py-4 px-6">
+                                    <div className="flex items-center">
+                                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                        <span className="text-white text-xs font-semibold">
+                                          {transaction.from_user_name.charAt(0)}
+                                        </span>
+                                      </div>
+                                      <div>
+                                        <div className="text-sm font-medium text-gray-900">
+                                          {transaction.from_user_name}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                          {getRoleDisplay(transaction.from_user_role)}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="py-4 px-6 text-center">
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                                      <span className="text-green-600 mr-1">+</span>
+                                      {transaction.amount}
+                                    </span>
+                                  </td>
+                                  <td className="py-4 px-6">
+                                    <div className="max-w-xs">
+                                      <p className="text-sm text-gray-900 leading-relaxed" title={transaction.reason}>
+                                        {transaction.reason}
+                                      </p>
+                                      <div className="mt-1">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-blue-100 text-blue-800">
+                                          {transaction.transaction_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <div className="text-center py-16">
+                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <span className="text-2xl">📋</span>
+                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">No recognition history</h3>
+                            <p className="text-gray-500">This employee hasn't received any recognition yet.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
+                    
+                    {/* Summary Stats */}
+                    {selectedEmployeeProfile.point_transactions.length > 0 && (
+                      <div className="mt-4 grid grid-cols-3 gap-4">
+                        <div className="bg-white rounded-lg p-4 border">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-blue-600">
+                              {selectedEmployeeProfile.point_transactions.length}
+                            </div>
+                            <div className="text-sm text-gray-500">Total Records</div>
+                          </div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-green-600">
+                              {Math.round(selectedEmployeeProfile.statistics.total_points_received / selectedEmployeeProfile.point_transactions.length) || 0}
+                            </div>
+                            <div className="text-sm text-gray-500">Avg Points</div>
+                          </div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-purple-600">
+                              {Math.max(...selectedEmployeeProfile.point_transactions.map(t => t.amount)) || 0}
+                            </div>
+                            <div className="text-sm text-gray-500">Highest Award</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
