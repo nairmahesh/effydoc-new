@@ -230,13 +230,15 @@ const Dashboard = () => {
       await axios.post(`${API}/tasks`, {
         title: taskTitle,
         description: taskDescription,
-        points_reward: parseInt(taskPoints)
+        points_reward: parseInt(taskPoints),
+        assignees: taskAssignees
       });
 
       // Reset form and refresh data
       setTaskTitle('');
       setTaskDescription('');
       setTaskPoints('');
+      setTaskAssignees([]);
       setShowCreateTask(false);
       fetchDashboardData();
       
