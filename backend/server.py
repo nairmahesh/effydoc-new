@@ -306,6 +306,109 @@ async def create_document(
     
     return document
 
+@api_router.post("/documents/upload")
+async def upload_document(
+    file: UploadFile = File(...),
+    title: str = None,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Upload a document file and convert it to editable format"""
+    import os
+    import PyPDF2
+    import docx
+    from io import BytesIO
+    
+    # Validate file type
+    allowed_types = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Unsupported file type. Please upload PDF, DOCX, or TXT files.")
+    
+    try:
+        # Read file content
+        content = await file.read()
+        
+        # Extract text based on file type
+        extracted_text = ""
+        if file.content_type == "application/pdf":
+            # Extract text from PDF
+            pdf_reader = PyPDF2.PdfReader(BytesIO(content))
+            for page in pdf_reader.pages:
+                extracted_text += page.extract_text() + "\n\n"
+        
+        elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            # Extract text from DOCX
+            doc = docx.Document(BytesIO(content))
+            for paragraph in doc.paragraphs:
+                extracted_text += paragraph.text + "\n"
+        
+        elif file.content_type == "text/plain":
+            # Plain text file
+            extracted_text = content.decode('utf-8')
+        
+        # Create document sections from extracted content
+        sections = []
+        paragraphs = [p.strip() for p in extracted_text.split('\n\n') if p.strip()]
+        
+        for i, paragraph in enumerate(paragraphs[:10]):  # Limit to first 10 paragraphs
+            if len(paragraph) > 20:  # Only include substantial paragraphs
+                sections.append(DocumentSection(
+                    title=f"Section {i+1}",
+                    content=paragraph,
+                    order=i+1
+                ))
+        
+        # If no substantial content found, create a single section
+        if not sections:
+            sections.append(DocumentSection(
+                title="Uploaded Content",
+                content=extracted_text[:1000] + "..." if len(extracted_text) > 1000 else extracted_text,
+                order=1
+            ))
+        
+        # Create document
+        documents_collection = await get_collection('documents')
+        
+        document = Document(
+            title=title or file.filename.rsplit('.', 1)[0],
+            type=DocumentType.PROPOSAL,
+            owner_id=current_user.id,
+            organization=current_user.organization,
+            sections=sections,
+            collaborators=[],
+            tags=["uploaded", "imported"],
+            metadata={
+                "original_filename": file.filename,
+                "file_type": file.content_type,
+                "upload_method": "file_upload",
+                "extracted_sections": len(sections)
+            }
+        )
+        
+        await documents_collection.insert_one(document.dict())
+        
+        # Log activity
+        await log_activity(
+            current_user.id, 
+            current_user.full_name, 
+            document.id, 
+            ActionType.CREATE, 
+            {
+                "title": document.title,
+                "upload_method": "file_upload",
+                "original_filename": file.filename
+            }
+        )
+        
+        return {
+            "message": "Document uploaded and processed successfully",
+            "document": document,
+            "sections_extracted": len(sections)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error processing uploaded file: {e}")
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
+
 @api_router.get("/documents", response_model=List[Document])
 async def get_documents(
     type: Optional[DocumentType] = None,
@@ -368,6 +471,124 @@ async def update_document(
     # Return updated document
     updated_doc = await documents_collection.find_one({"id": document_id})
     return Document(**updated_doc)
+
+@api_router.put("/documents/{document_id}/sections/{section_id}")
+async def update_document_section(
+    document_id: str,
+    section_id: str,
+    section_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Update a specific section of a document"""
+    await check_document_access(document_id, current_user, "edit")
+    documents_collection = await get_collection('documents')
+    
+    # Update the specific section
+    await documents_collection.update_one(
+        {"id": document_id, "sections.id": section_id},
+        {"$set": {
+            "sections.$.title": section_data.get("title"),
+            "sections.$.content": section_data.get("content"),
+            "sections.$.multimedia_elements": section_data.get("multimedia_elements", []),
+            "sections.$.interactive_elements": section_data.get("interactive_elements", []),
+            "updated_at": datetime.utcnow()
+        }}
+    )
+    
+    # Log activity
+    await log_activity(
+        current_user.id, 
+        current_user.full_name, 
+        document_id, 
+        ActionType.EDIT, 
+        {
+            "section_id": section_id,
+            "section_title": section_data.get("title"),
+            "action": "section_updated"
+        }
+    )
+    
+    return {"message": "Section updated successfully"}
+
+@api_router.post("/documents/{document_id}/sections/{section_id}/multimedia")
+async def add_multimedia_element(
+    document_id: str,
+    section_id: str,
+    multimedia_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Add multimedia element to a document section"""
+    await check_document_access(document_id, current_user, "edit")
+    documents_collection = await get_collection('documents')
+    
+    multimedia_element = MultimediaElement(
+        type=multimedia_data["type"],
+        url=multimedia_data["url"],
+        title=multimedia_data.get("title"),
+        description=multimedia_data.get("description"),
+        duration=multimedia_data.get("duration")
+    )
+    
+    # Add multimedia element to the section
+    await documents_collection.update_one(
+        {"id": document_id, "sections.id": section_id},
+        {"$push": {"sections.$.multimedia_elements": multimedia_element.dict()}}
+    )
+    
+    # Log activity
+    await log_activity(
+        current_user.id, 
+        current_user.full_name, 
+        document_id, 
+        ActionType.EDIT, 
+        {
+            "section_id": section_id,
+            "action": "multimedia_added",
+            "multimedia_type": multimedia_data["type"]
+        }
+    )
+    
+    return {"message": "Multimedia element added successfully", "element": multimedia_element}
+
+@api_router.post("/documents/{document_id}/sections/{section_id}/interactive")
+async def add_interactive_element(
+    document_id: str,
+    section_id: str,
+    interactive_data: Dict[str, Any],
+    current_user: User = Depends(get_current_active_user)
+):
+    """Add interactive element (button, e-signature field) to a document section"""
+    await check_document_access(document_id, current_user, "edit")
+    documents_collection = await get_collection('documents')
+    
+    interactive_element = InteractiveElement(
+        type=interactive_data["type"],
+        label=interactive_data["label"],
+        action=interactive_data.get("action"),
+        required=interactive_data.get("required", False),
+        position=interactive_data.get("position", {"x": 0.5, "y": 0.3, "page": 1})
+    )
+    
+    # Add interactive element to the section
+    await documents_collection.update_one(
+        {"id": document_id, "sections.id": section_id},
+        {"$push": {"sections.$.interactive_elements": interactive_element.dict()}}
+    )
+    
+    # Log activity
+    await log_activity(
+        current_user.id, 
+        current_user.full_name, 
+        document_id, 
+        ActionType.EDIT, 
+        {
+            "section_id": section_id,
+            "action": "interactive_added",
+            "interactive_type": interactive_data["type"]
+        }
+    )
+    
+    return {"message": "Interactive element added successfully", "element": interactive_element}
 
 @api_router.delete("/documents/{document_id}")
 async def delete_document(
