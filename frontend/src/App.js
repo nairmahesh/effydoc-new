@@ -1280,6 +1280,7 @@ const Dashboard = () => {
       )}
     </div>
   );
+};
 
 // Main App Component
 function App() {
