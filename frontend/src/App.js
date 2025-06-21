@@ -475,9 +475,68 @@ const Dashboard = () => {
               </div>
             </div>
           ) : (
+            /* Employee Recent Activity */
+            <div className="bg-white rounded-xl p-6 shadow-sm border">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
+              <div className="space-y-3">
+                {stats.recent_transactions.slice(0, 5).map((transaction, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {transaction.from_user_id === user.id ? 'Gave' : 'Received'} {transaction.amount} points
+                      </p>
+                      <p className="text-sm text-gray-600">{transaction.reason}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">
+                        {formatDate(transaction.created_at)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {stats.recent_transactions.length === 0 && (
+                  <div className="text-center py-6">
+                    <span className="text-2xl block mb-2">📋</span>
+                    <p className="text-gray-500">No recent activity</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Team Members Section - Full Width */}
+        {(user.role === 'manager' || user.role === 'company_admin') && (
+          <div className="mt-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Team Management</h2>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowManageTeams(true)}
+                  className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors flex items-center space-x-2"
+                >
+                  <span>👥</span>
+                  <span>Manage Teams</span>
+                </button>
+                <button
+                  onClick={() => setShowCreateTask(true)}
+                  className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center space-x-2"
+                >
+                  <span>📋</span>
+                  <span>Create Task</span>
+                </button>
+                <button
+                  onClick={() => setShowGivePoints(true)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
+                >
+                  <span>✨</span>
+                  <span>Give Points</span>
+                </button>
+              </div>
+            </div>
                 
-                {/* Enhanced Team Members Table */}
-                <div className="bg-white rounded-xl shadow-sm border overflow-hidden mb-6">
+            {/* Enhanced Team Members Table */}
+            <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-200">
                     <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
                   </div>
