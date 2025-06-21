@@ -1113,26 +1113,45 @@ const Dashboard = () => {
       {/* Create Task Modal */}
       {showCreateTask && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+          <div className="bg-white rounded-xl p-6 w-full max-w-2xl">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Create New Task</h2>
-            <form onSubmit={handleCreateTask} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Task Title
-                </label>
-                <input
-                  type="text"
-                  value={taskTitle}
-                  onChange={(e) => setTaskTitle(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Enter task title"
-                  required
-                />
+            <form onSubmit={handleCreateTask} className="space-y-6">
+              {/* Task Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Task Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={taskTitle}
+                    onChange={(e) => setTaskTitle(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Enter task title"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Points Reward *
+                  </label>
+                  <input
+                    type="number"
+                    value={taskPoints}
+                    onChange={(e) => setTaskPoints(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Points to award"
+                    min="1"
+                    max="100"
+                    required
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
+                  Description *
                 </label>
                 <textarea
                   value={taskDescription}
@@ -1144,44 +1163,158 @@ const Dashboard = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Points Reward
+              {/* Assignment Section */}
+              <div className="border-t pt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Assign To *
                 </label>
-                <input
-                  type="number"
-                  value={taskPoints}
-                  onChange={(e) => setTaskPoints(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Points to award upon completion"
-                  min="1"
-                  max="100"
-                  required
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Individual Assignment */}
+                  <div className="border rounded-lg p-4">
+                    <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                      <span className="mr-2">👤</span>
+                      Individual Assignment
+                    </h4>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {teamMembers.map((member) => (
+                        <label key={member.id} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={taskAssignees.includes(member.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setTaskAssignees([...taskAssignees, member.id]);
+                              } else {
+                                setTaskAssignees(taskAssignees.filter(id => id !== member.id));
+                              }
+                            }}
+                            className="mr-2 text-purple-600 focus:ring-purple-500"
+                          />
+                          <span className="text-sm text-gray-700">{member.name}</span>
+                          <span className="ml-auto text-xs text-gray-500">
+                            {member.department || 'No dept'}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Team Assignment */}
+                  <div className="border rounded-lg p-4">
+                    <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                      <span className="mr-2">👥</span>
+                      Team Assignment
+                    </h4>
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const allIds = teamMembers.map(m => m.id);
+                          setTaskAssignees(allIds);
+                        }}
+                        className="w-full text-left p-2 bg-blue-50 text-blue-700 rounded border hover:bg-blue-100 transition-colors"
+                      >
+                        <span className="font-medium">📋 Assign to All Team Members</span>
+                        <p className="text-xs text-blue-600 mt-1">Select entire team</p>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const deptMembers = teamMembers
+                            .filter(m => m.department)
+                            .reduce((groups, member) => {
+                              const dept = member.department;
+                              groups[dept] = groups[dept] || [];
+                              groups[dept].push(member.id);
+                              return groups;
+                            }, {});
+                          
+                          // For demo, assign to Engineering department
+                          const engIds = deptMembers['Engineering'] || [];
+                          setTaskAssignees(engIds);
+                        }}
+                        className="w-full text-left p-2 bg-green-50 text-green-700 rounded border hover:bg-green-100 transition-colors"
+                      >
+                        <span className="font-medium">🏢 Engineering Team</span>
+                        <p className="text-xs text-green-600 mt-1">Department-based assignment</p>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const topPerformers = teamMembers
+                            .filter(m => m.point_balance >= 50)
+                            .map(m => m.id);
+                          setTaskAssignees(topPerformers);
+                        }}
+                        className="w-full text-left p-2 bg-yellow-50 text-yellow-700 rounded border hover:bg-yellow-100 transition-colors"
+                      >
+                        <span className="font-medium">⭐ Top Performers</span>
+                        <p className="text-xs text-yellow-600 mt-1">High-achieving employees</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Selected Assignees Display */}
+                {taskAssignees.length > 0 && (
+                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      Selected Assignees ({taskAssignees.length}):
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {taskAssignees.map(assigneeId => {
+                        const member = teamMembers.find(m => m.id === assigneeId);
+                        return member ? (
+                          <span key={assigneeId} className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+                            {member.name}
+                            <button
+                              type="button"
+                              onClick={() => setTaskAssignees(taskAssignees.filter(id => id !== assigneeId))}
+                              className="ml-1 text-purple-600 hover:text-purple-800"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="bg-purple-50 p-3 rounded-lg">
-                <div className="flex items-center">
-                  <span className="text-purple-600 mr-2">💡</span>
-                  <p className="text-sm text-purple-700">
-                    Tasks help motivate employees and provide clear goals with reward incentives.
-                  </p>
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="flex items-start">
+                  <span className="text-purple-600 mr-2 mt-0.5">💡</span>
+                  <div>
+                    <p className="text-sm text-purple-700 font-medium">Task Assignment Tips:</p>
+                    <ul className="text-xs text-purple-600 mt-1 space-y-1">
+                      <li>• Individual tasks focus on specific skills</li>
+                      <li>• Team assignments encourage collaboration</li>
+                      <li>• Point rewards motivate completion</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex space-x-3">
+              <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  onClick={() => setShowCreateTask(false)}
-                  className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+                  onClick={() => {
+                    setShowCreateTask(false);
+                    setTaskAssignees([]);
+                  }}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-purple-500 text-white py-3 px-4 rounded-lg hover:bg-purple-600 transition-colors"
+                  disabled={taskAssignees.length === 0}
+                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Create Task
+                  Create Task ({taskAssignees.length} assignees)
                 </button>
               </div>
             </form>
