@@ -63,6 +63,7 @@ class User(BaseModel):
     role: UserRole
     company_id: Optional[str] = None
     manager_id: Optional[str] = None
+    department: Optional[str] = None
     point_balance: int = 0
     point_cap: int = 500
     point_cap_renewal_type: str = "request"  # "request" or "automatic"
