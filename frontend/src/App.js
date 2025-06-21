@@ -721,7 +721,16 @@ const Dashboard = () => {
         {/* Give Points Modal */}
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Give Points</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-900">Give Points</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowGivePoints(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl leading-none p-1 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  ×
+                </button>
+              </div>
             <form onSubmit={handleGivePoints} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
