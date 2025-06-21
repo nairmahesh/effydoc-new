@@ -232,6 +232,30 @@ frontend:
         agent: "main"
         comment: "Implemented employee dashboard showing point balance, earned badges with icons and descriptions, and recent activity."
 
+  - task: "360-degree employee profile view"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented comprehensive employee profile endpoint and clickable employee names. Shows complete recognition history, badge timeline, department info, manager details, points breakdown by month/reason, and statistics."
+
+  - task: "Department field for employees"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added department field to User model and registration. Updated demo data with Engineering, Marketing, and Sales departments."
+
   - task: "Modern UI with Tailwind"
     implemented: true
     working: "NA"
