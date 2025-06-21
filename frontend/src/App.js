@@ -168,7 +168,9 @@ const Dashboard = () => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [badges, setBadges] = useState([]);
   const [showGivePoints, setShowGivePoints] = useState(false);
+  const [showEmployeeProfile, setShowEmployeeProfile] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState('');
+  const [selectedEmployeeProfile, setSelectedEmployeeProfile] = useState(null);
   const [pointsAmount, setPointsAmount] = useState('');
   const [pointsReason, setPointsReason] = useState('');
 
@@ -194,6 +196,21 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     }
+  };
+
+  const fetchEmployeeProfile = async (employeeId) => {
+    try {
+      const response = await axios.get(`${API}/users/${employeeId}/profile`);
+      setSelectedEmployeeProfile(response.data);
+      setShowEmployeeProfile(true);
+    } catch (error) {
+      console.error('Failed to fetch employee profile:', error);
+      alert('Failed to load employee profile');
+    }
+  };
+
+  const handleEmployeeClick = (employee) => {
+    fetchEmployeeProfile(employee.id);
   };
 
   const handleGivePoints = async (e) => {
@@ -223,6 +240,24 @@ const Dashboard = () => {
     return role.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const formatDateTime = (dateString) => {
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   if (!stats) {
