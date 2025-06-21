@@ -53,9 +53,9 @@ async def setup_demo_data():
                 
                 # Create employees under the manager
                 employees = [
-                    {"name": "John Doe", "email": "john@company.com"},
-                    {"name": "Jane Smith", "email": "jane@company.com"},
-                    {"name": "Bob Johnson", "email": "bob@company.com"}
+                    {"name": "John Doe", "email": "john@company.com", "department": "Engineering"},
+                    {"name": "Jane Smith", "email": "jane@company.com", "department": "Marketing"},
+                    {"name": "Bob Johnson", "email": "bob@company.com", "department": "Sales"}
                 ]
                 
                 for emp in employees:
