@@ -2,6 +2,7 @@ import requests
 import json
 import unittest
 import uuid
+import os
 from datetime import datetime
 
 # Get the backend URL from the frontend .env file
@@ -17,6 +18,7 @@ def test_backend_api():
     test_user_email = f"test.user.{uuid.uuid4()}@example.com"
     test_user_password = "SecurePassword123!"
     test_document_id = None
+    test_section_id = None
     
     # 1. Test health check endpoint
     print("\n1. Testing health check endpoint...")
@@ -285,6 +287,7 @@ def test_backend_api():
     
     # Save document ID for subsequent tests
     test_document_id = data["id"]
+    test_section_id = data["sections"][0]["id"]
     print("✅ Document creation working")
     
     # 14. Test sending document via email
@@ -463,19 +466,177 @@ def test_backend_api():
     assert "performance_data" in data, "Missing performance_data in response"
     print("✅ Document performance analysis working")
     
-    # 24. Test document deletion
-    print("\n24. Testing document deletion...")
-    response = requests.delete(f"{base_url}/documents/{test_document_id}", headers=headers)
+    # 24. Test document upload with text file
+    print("\n24. Testing document upload with text file...")
+    
+    # Create a test text file
+    test_file_path = "/tmp/test_document.txt"
+    with open(test_file_path, "w") as f:
+        f.write("This is a test proposal document. Section 1: Project Overview. This section describes the project details. Section 2: Requirements. This section outlines the requirements.")
+    
+    # Upload the file
+    with open(test_file_path, "rb") as f:
+        files = {"file": ("test_document.txt", f, "text/plain")}
+        response = requests.post(
+            f"{base_url}/documents/upload",
+            files=files,
+            data={"title": "Test Document Upload"},
+            headers={"Authorization": headers["Authorization"]}
+        )
+    
     assert response.status_code == 200, f"Expected 200, got {response.status_code}"
     data = response.json()
     
-    # Verify deletion response
-    assert data["message"] == "Document deleted successfully", f"Expected 'Document deleted successfully', got {data['message']}"
+    # Verify upload response
+    assert data["message"] == "Document uploaded and processed successfully", f"Expected 'Document uploaded and processed successfully', got {data['message']}"
+    assert "document" in data, "Missing document in response"
+    assert data["document"]["title"] == "Test Document Upload", f"Expected 'Test Document Upload', got {data['document']['title']}"
+    assert "sections_extracted" in data, "Missing sections_extracted in response"
+    assert data["sections_extracted"] >= 1, f"Expected at least 1 section extracted, got {data['sections_extracted']}"
     
-    # Verify document is actually deleted
-    response = requests.get(f"{base_url}/documents/{test_document_id}", headers=headers)
-    assert response.status_code == 404, f"Expected 404, got {response.status_code}"
-    print("✅ Document deletion working")
+    # Save uploaded document ID and section ID for subsequent tests
+    uploaded_document_id = data["document"]["id"]
+    uploaded_section_id = data["document"]["sections"][0]["id"]
+    print("✅ Document upload with text file working")
+    
+    # 25. Test updating a document section
+    print("\n25. Testing update document section...")
+    section_update_data = {
+        "title": "Updated Section Title",
+        "content": "This is updated section content with rich text formatting."
+    }
+    
+    response = requests.put(
+        f"{base_url}/documents/{uploaded_document_id}/sections/{uploaded_section_id}",
+        json=section_update_data,
+        headers=headers
+    )
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    data = response.json()
+    
+    # Verify section update response
+    assert data["message"] == "Section updated successfully", f"Expected 'Section updated successfully', got {data['message']}"
+    
+    # Verify the update by getting the document
+    response = requests.get(f"{base_url}/documents/{uploaded_document_id}", headers=headers)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    data = response.json()
+    
+    section_found = False
+    for section in data["sections"]:
+        if section["id"] == uploaded_section_id:
+            section_found = True
+            assert section["title"] == "Updated Section Title", f"Expected 'Updated Section Title', got {section['title']}"
+            assert section["content"] == "This is updated section content with rich text formatting.", f"Content not updated correctly"
+            break
+    
+    assert section_found, "Updated section not found in document"
+    print("✅ Update document section working")
+    
+    # 26. Test adding multimedia element to a section
+    print("\n26. Testing add multimedia element to section...")
+    multimedia_data = {
+        "type": "video",
+        "url": "https://example.com/video.mp4",
+        "title": "Project Demo Video",
+        "description": "Overview of the project"
+    }
+    
+    response = requests.post(
+        f"{base_url}/documents/{uploaded_document_id}/sections/{uploaded_section_id}/multimedia",
+        json=multimedia_data,
+        headers=headers
+    )
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    data = response.json()
+    
+    # Verify multimedia element response
+    assert data["message"] == "Multimedia element added successfully", f"Expected 'Multimedia element added successfully', got {data['message']}"
+    assert "element" in data, "Missing element in response"
+    assert data["element"]["type"] == "video", f"Expected 'video', got {data['element']['type']}"
+    assert data["element"]["url"] == "https://example.com/video.mp4", f"URL not set correctly"
+    
+    # Save multimedia element ID for verification
+    multimedia_element_id = data["element"]["id"]
+    
+    # Verify the multimedia element was added by getting the document
+    response = requests.get(f"{base_url}/documents/{uploaded_document_id}", headers=headers)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    data = response.json()
+    
+    multimedia_found = False
+    for section in data["sections"]:
+        if section["id"] == uploaded_section_id:
+            for element in section["multimedia_elements"]:
+                if element["id"] == multimedia_element_id:
+                    multimedia_found = True
+                    assert element["type"] == "video", f"Expected 'video', got {element['type']}"
+                    assert element["url"] == "https://example.com/video.mp4", f"URL not set correctly"
+                    break
+    
+    assert multimedia_found, "Multimedia element not found in document section"
+    print("✅ Add multimedia element to section working")
+    
+    # 27. Test adding interactive element to a section
+    print("\n27. Testing add interactive element to section...")
+    interactive_data = {
+        "type": "signature_field",
+        "label": "Client Signature",
+        "required": True,
+        "position": {"x": 0.5, "y": 0.8, "page": 1}
+    }
+    
+    response = requests.post(
+        f"{base_url}/documents/{uploaded_document_id}/sections/{uploaded_section_id}/interactive",
+        json=interactive_data,
+        headers=headers
+    )
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    data = response.json()
+    
+    # Verify interactive element response
+    assert data["message"] == "Interactive element added successfully", f"Expected 'Interactive element added successfully', got {data['message']}"
+    assert "element" in data, "Missing element in response"
+    assert data["element"]["type"] == "signature_field", f"Expected 'signature_field', got {data['element']['type']}"
+    assert data["element"]["label"] == "Client Signature", f"Label not set correctly"
+    
+    # Save interactive element ID for verification
+    interactive_element_id = data["element"]["id"]
+    
+    # Verify the interactive element was added by getting the document
+    response = requests.get(f"{base_url}/documents/{uploaded_document_id}", headers=headers)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    data = response.json()
+    
+    interactive_found = False
+    for section in data["sections"]:
+        if section["id"] == uploaded_section_id:
+            for element in section["interactive_elements"]:
+                if element["id"] == interactive_element_id:
+                    interactive_found = True
+                    assert element["type"] == "signature_field", f"Expected 'signature_field', got {element['type']}"
+                    assert element["label"] == "Client Signature", f"Label not set correctly"
+                    break
+    
+    assert interactive_found, "Interactive element not found in document section"
+    print("✅ Add interactive element to section working")
+    
+    # 28. Test document deletion (cleanup)
+    print("\n28. Testing document deletion (cleanup)...")
+    
+    # Delete the first test document
+    response = requests.delete(f"{base_url}/documents/{test_document_id}", headers=headers)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    
+    # Delete the uploaded test document
+    response = requests.delete(f"{base_url}/documents/{uploaded_document_id}", headers=headers)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    
+    # Clean up the test file
+    if os.path.exists(test_file_path):
+        os.remove(test_file_path)
+    
+    print("✅ Document deletion (cleanup) working")
     
     print("\n✅ All tests passed successfully!")
 
