@@ -721,18 +721,29 @@ const Dashboard = () => {
         {/* Give Points Modal */}
         {showGivePoints && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        {/* Give Points Modal */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Employee
-                </label>
-                <select
-                  value={selectedEmployee}
-                  onChange={(e) => setSelectedEmployee(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
+            <div className="bg-white rounded-xl p-6 w-full max-w-md">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-900">Give Points</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowGivePoints(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl leading-none p-1 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <option value="">Choose an employee...</option>
+                  ×
+                </button>
+              </div>
+              <form onSubmit={handleGivePoints} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Employee
+                  </label>
+                  <select
+                    value={selectedEmployee}
+                    onChange={(e) => setSelectedEmployee(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="">Choose an employee...</option>
                   {teamMembers.map((member) => (
                     <option key={member.id} value={member.id}>
                       {member.name}
