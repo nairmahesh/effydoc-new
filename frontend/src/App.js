@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import RFPBuilder from './pages/RFPBuilder';
+import Profile from './pages/Profile';
 import './App.css';
 
 // Protected Route Component
