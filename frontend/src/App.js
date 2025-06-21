@@ -56,12 +56,94 @@ const Documents = () => (
   </div>
 );
 
-const CreateDocument = () => (
-  <div className="text-center py-12">
-    <h1 className="text-2xl font-bold text-gray-900">Create Document</h1>
-    <p className="mt-2 text-gray-600">Document editor interface coming soon...</p>
-  </div>
-);
+const CreateDocument = () => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="bg-white shadow sm:rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <h1 className="text-2xl font-bold text-gray-900">Create New Document</h1>
+          <p className="mt-2 text-gray-600">Choose how you want to create your document</p>
+        </div>
+      </div>
+
+      {/* Options */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Start from Scratch */}
+        <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-2 border-transparent hover:border-indigo-200">
+          <div className="text-center">
+            <div className="bg-indigo-100 rounded-full p-4 w-16 h-16 mx-auto mb-4">
+              <PlusIcon className="h-8 w-8 text-indigo-600" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Start from Scratch</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Create a new document with our rich editor and interactive elements
+            </p>
+            <button 
+              onClick={() => navigate('/rfp-builder')}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              Create Document
+            </button>
+          </div>
+        </div>
+
+        {/* Upload Document */}
+        <div className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border-2 border-transparent hover:border-indigo-200">
+          <div className="text-center">
+            <div className="bg-green-100 rounded-full p-4 w-16 h-16 mx-auto mb-4">
+              <CloudArrowUpIcon className="h-8 w-8 text-green-600" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Upload Document</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Upload PDF, DOCX, or TXT files and make them interactive
+            </p>
+            <button 
+              onClick={() => navigate('/documents/upload')}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+            >
+              Upload Document
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Features */}
+      <div className="bg-white shadow sm:rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">What you can do with documents:</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-start space-x-3">
+              <VideoCameraIcon className="h-6 w-6 text-indigo-600 mt-1" />
+              <div>
+                <h4 className="font-medium text-gray-900">Add Multimedia</h4>
+                <p className="text-sm text-gray-500">Embed videos, audio, and images</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-3">
+              <FingerPrintIcon className="h-6 w-6 text-red-600 mt-1" />
+              <div>
+                <h4 className="font-medium text-gray-900">E-signatures</h4>
+                <p className="text-sm text-gray-500">Add signature fields anywhere</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-3">
+              <EyeIcon className="h-6 w-6 text-purple-600 mt-1" />
+              <div>
+                <h4 className="font-medium text-gray-900">Track Engagement</h4>
+                <p className="text-sm text-gray-500">See who views and engages</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Analytics = () => (
   <div className="text-center py-12">
