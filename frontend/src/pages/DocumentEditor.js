@@ -436,13 +436,9 @@ const DocumentEditor = () => {
                       type="button"
                       className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                       onClick={() => {
-                        const textarea = document.querySelector(`#section-${section.id}`);
-                        const start = textarea.selectionStart;
-                        const end = textarea.selectionEnd;
-                        const text = textarea.value;
-                        const selectedText = text.substring(start, end);
-                        const newText = text.substring(0, start) + `**${selectedText}**` + text.substring(end);
-                        updateSectionContent(section.id, newText);
+                        const currentContent = section.content;
+                        const newContent = currentContent + '\n\n**Bold text here**';
+                        updateSectionContent(section.id, newContent);
                       }}
                     >
                       <strong>B</strong>
@@ -451,13 +447,9 @@ const DocumentEditor = () => {
                       type="button"
                       className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                       onClick={() => {
-                        const textarea = document.querySelector(`#section-${section.id}`);
-                        const start = textarea.selectionStart;
-                        const end = textarea.selectionEnd;
-                        const text = textarea.value;
-                        const selectedText = text.substring(start, end);
-                        const newText = text.substring(0, start) + `*${selectedText}*` + text.substring(end);
-                        updateSectionContent(section.id, newText);
+                        const currentContent = section.content;
+                        const newContent = currentContent + '\n\n*Italic text here*';
+                        updateSectionContent(section.id, newContent);
                       }}
                     >
                       <em>I</em>
@@ -466,11 +458,9 @@ const DocumentEditor = () => {
                       type="button"
                       className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                       onClick={() => {
-                        const textarea = document.querySelector(`#section-${section.id}`);
-                        const start = textarea.selectionStart;
-                        const text = textarea.value;
-                        const newText = text.substring(0, start) + '\n• ' + text.substring(start);
-                        updateSectionContent(section.id, newText);
+                        const currentContent = section.content;
+                        const newContent = currentContent + '\n\n• List item 1\n• List item 2';
+                        updateSectionContent(section.id, newContent);
                       }}
                     >
                       List
@@ -487,6 +477,9 @@ const DocumentEditor = () => {
                     placeholder="Start writing your content here..."
                   />
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Use **bold**, *italic*, and • for bullets in your content
+                </p>
               </div>
 
               {/* Multimedia Elements */}
