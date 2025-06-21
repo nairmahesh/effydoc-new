@@ -221,7 +221,28 @@ const Dashboard = () => {
     fetchEmployeeProfile(employee.id);
   };
 
-  const handleGivePoints = async (e) => {
+  const handleCreateTask = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API}/tasks`, {
+        title: taskTitle,
+        description: taskDescription,
+        points_reward: parseInt(taskPoints)
+      });
+
+      // Reset form and refresh data
+      setTaskTitle('');
+      setTaskDescription('');
+      setTaskPoints('');
+      setShowCreateTask(false);
+      fetchDashboardData();
+      
+      alert('Task created successfully!');
+    } catch (error) {
+      console.error('Failed to create task:', error);
+      alert('Failed to create task. Please try again.');
+    }
+  };
     e.preventDefault();
     try {
       await axios.post(`${API}/points/give`, {
