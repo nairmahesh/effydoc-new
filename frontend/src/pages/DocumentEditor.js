@@ -427,15 +427,66 @@ const DocumentEditor = () => {
                 </div>
               </div>
 
-              {/* Rich Text Editor */}
+              {/* Simple Rich Text Editor */}
               <div className="mb-4">
-                <ReactQuill
-                  theme="snow"
-                  value={section.content}
-                  onChange={(content) => updateSectionContent(section.id, content)}
-                  modules={quillModules}
-                  className="bg-white"
-                />
+                <div className="border border-gray-300 rounded-md">
+                  {/* Simple Toolbar */}
+                  <div className="border-b border-gray-200 p-2 bg-gray-50 flex space-x-2">
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                      onClick={() => {
+                        const textarea = document.querySelector(`#section-${section.id}`);
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = textarea.value;
+                        const selectedText = text.substring(start, end);
+                        const newText = text.substring(0, start) + `**${selectedText}**` + text.substring(end);
+                        updateSectionContent(section.id, newText);
+                      }}
+                    >
+                      <strong>B</strong>
+                    </button>
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                      onClick={() => {
+                        const textarea = document.querySelector(`#section-${section.id}`);
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const text = textarea.value;
+                        const selectedText = text.substring(start, end);
+                        const newText = text.substring(0, start) + `*${selectedText}*` + text.substring(end);
+                        updateSectionContent(section.id, newText);
+                      }}
+                    >
+                      <em>I</em>
+                    </button>
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                      onClick={() => {
+                        const textarea = document.querySelector(`#section-${section.id}`);
+                        const start = textarea.selectionStart;
+                        const text = textarea.value;
+                        const newText = text.substring(0, start) + '\n• ' + text.substring(start);
+                        updateSectionContent(section.id, newText);
+                      }}
+                    >
+                      List
+                    </button>
+                  </div>
+                  
+                  {/* Text Area */}
+                  <textarea
+                    id={`section-${section.id}`}
+                    value={section.content}
+                    onChange={(e) => updateSectionContent(section.id, e.target.value)}
+                    rows={8}
+                    className="w-full p-3 border-none resize-none focus:outline-none focus:ring-0"
+                    placeholder="Start writing your content here..."
+                  />
+                </div>
               </div>
 
               {/* Multimedia Elements */}
