@@ -57,7 +57,7 @@ const Profile = () => {
 
   const loadEmailConnections = async () => {
     try {
-      const response = await authAPI.api.get('/users/me/email-connections');
+      const response = await authAPI.getEmailConnections();
       setEmailConnections(response.data);
     } catch (error) {
       console.error('Error loading email connections:', error);
