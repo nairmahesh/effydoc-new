@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import RFPBuilder from './pages/RFPBuilder';
 import Profile from './pages/Profile';
+import { PlusIcon, CloudArrowUpIcon, VideoCameraIcon, FingerPrintIcon, EyeIcon } from '@heroicons/react/24/outline';
 import './App.css';
 
 // Protected Route Component
