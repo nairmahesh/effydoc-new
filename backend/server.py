@@ -86,9 +86,15 @@ async def register_user(user_data: UserCreate):
     }
 
 @api_router.post("/auth/login")
-async def login_user(email: str, password: str):
+async def login_user(login_data: dict):
     """Authenticate user and return access token"""
     users_collection = await get_collection('users')
+    
+    email = login_data.get("email")
+    password = login_data.get("password")
+    
+    if not email or not password:
+        raise HTTPException(status_code=400, detail="Email and password are required")
     
     user_data = await users_collection.find_one({"email": email})
     if not user_data or not verify_password(password, user_data['hashed_password']):
