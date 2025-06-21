@@ -243,6 +243,8 @@ const Dashboard = () => {
       alert('Failed to create task. Please try again.');
     }
   };
+
+  const handleGivePoints = async (e) => {
     e.preventDefault();
     try {
       await axios.post(`${API}/points/give`, {
@@ -257,7 +259,6 @@ const Dashboard = () => {
       setPointsReason('');
       setShowGivePoints(false);
       fetchDashboardData();
-      
       alert('Points awarded successfully!');
     } catch (error) {
       console.error('Failed to give points:', error);
