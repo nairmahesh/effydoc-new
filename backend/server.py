@@ -403,14 +403,20 @@ async def get_transactions(current_user: User = Depends(get_current_user)):
         ]
     }).sort("created_at", -1).to_list(100)
     
-    # Populate user names
+    # Populate user names and handle ObjectId
+    result = []
     for transaction in transactions:
+        # Convert _id to string if it exists
+        if "_id" in transaction and isinstance(transaction["_id"], ObjectId):
+            transaction["_id"] = str(transaction["_id"])
+            
         from_user = await db.users.find_one({"id": transaction["from_user_id"]})
         to_user = await db.users.find_one({"id": transaction["to_user_id"]})
         transaction["from_user_name"] = from_user.get("name", "Unknown") if from_user else "Unknown"
         transaction["to_user_name"] = to_user.get("name", "Unknown") if to_user else "Unknown"
+        result.append(transaction)
     
-    return transactions
+    return result
 
 # User routes
 @api_router.get("/users/team")
