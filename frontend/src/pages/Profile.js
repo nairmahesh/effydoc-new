@@ -94,7 +94,7 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const response = await authAPI.api.post('/users/me/email-connections', emailForm);
+      const response = await authAPI.addEmailConnection(emailForm);
       setEmailConnections([...emailConnections, response.data]);
       setEmailForm({
         provider: 'gmail',
