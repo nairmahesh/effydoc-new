@@ -378,9 +378,9 @@ const DocumentEditor = () => {
       </div>
 
       {/* Editor */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Document Sections */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-4 space-y-6">
           {document.sections.map((section, index) => (
             <div
               key={section.id}
@@ -401,29 +401,7 @@ const DocumentEditor = () => {
                 />
                 
                 <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => {
-                      setActiveSection(section.id);
-                      setElementType('multimedia');
-                      setShowElementPanel(true);
-                    }}
-                    className="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
-                    title="Add multimedia"
-                  >
-                    <VideoCameraIcon className="h-5 w-5" />
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      setActiveSection(section.id);
-                      setElementType('interactive');
-                      setShowElementPanel(true);
-                    }}
-                    className="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
-                    title="Add interactive element"
-                  >
-                    <CursorArrowRippleIcon className="h-5 w-5" />
-                  </button>
+                  <span className="text-xs text-gray-500">Section {index + 1}</span>
                 </div>
               </div>
 
@@ -533,51 +511,123 @@ const DocumentEditor = () => {
           ))}
         </div>
 
-        {/* Sidebar Tools */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <div className="bg-white shadow rounded-lg p-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+        {/* Right Sidebar Tools - Similar to effyDoc */}
+        <div className="lg:col-span-1">
+          <div className="bg-white shadow rounded-lg p-4 sticky top-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Add Elements</h3>
+            
+            {/* Tool Buttons */}
             <div className="space-y-3">
-              <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                <ChatBubbleLeftRightIcon className="h-4 w-4 mr-3" />
-                Add Comment
-              </button>
-              
-              <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                <ShareIcon className="h-4 w-4 mr-3" />
-                Share Document
-              </button>
-              
+              {/* Audio Tool */}
               <button
-                onClick={() => navigate(`/documents/${documentId}/analytics`)}
-                className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                onClick={() => {
+                  setActiveSection(document.sections[0]?.id);
+                  setElementType('multimedia');
+                  setMultimediaForm({...multimediaForm, type: 'audio'});
+                  setShowElementPanel(true);
+                }}
+                className="w-full flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors group"
               >
-                <EyeIcon className="h-4 w-4 mr-3" />
-                View Analytics
+                <SpeakerWaveIcon className="h-8 w-8 text-gray-400 group-hover:text-green-600 mb-2" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-green-600">Audio</span>
+              </button>
+
+              {/* Video Tool */}
+              <button
+                onClick={() => {
+                  setActiveSection(document.sections[0]?.id);
+                  setElementType('multimedia');
+                  setMultimediaForm({...multimediaForm, type: 'video'});
+                  setShowElementPanel(true);
+                }}
+                className="w-full flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors group"
+              >
+                <VideoCameraIcon className="h-8 w-8 text-gray-400 group-hover:text-blue-600 mb-2" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">Video</span>
+              </button>
+
+              {/* Text Tool */}
+              <button
+                onClick={() => {
+                  const newSection = {
+                    id: Date.now().toString(),
+                    title: `New Section`,
+                    content: 'Start writing your content here...',
+                    order: document.sections.length + 1,
+                    multimedia_elements: [],
+                    interactive_elements: []
+                  };
+                  const updatedSections = [...document.sections, newSection];
+                  setDocument({...document, sections: updatedSections});
+                  toast.success('New text section added!');
+                }}
+                className="w-full flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors group"
+              >
+                <ChatBubbleLeftRightIcon className="h-8 w-8 text-gray-400 group-hover:text-gray-600 mb-2" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-600">Text</span>
+              </button>
+
+              {/* Image/Overlay Tool */}
+              <button
+                onClick={() => {
+                  setActiveSection(document.sections[0]?.id);
+                  setElementType('multimedia');
+                  setMultimediaForm({...multimediaForm, type: 'image'});
+                  setShowElementPanel(true);
+                }}
+                className="w-full flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors group"
+              >
+                <PhotoIcon className="h-8 w-8 text-gray-400 group-hover:text-purple-600 mb-2" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-purple-600">Image</span>
+              </button>
+
+              {/* Button Tool */}
+              <button
+                onClick={() => {
+                  setActiveSection(document.sections[0]?.id);
+                  setElementType('interactive');
+                  setInteractiveForm({...interactiveForm, type: 'button'});
+                  setShowElementPanel(true);
+                }}
+                className="w-full flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors group"
+              >
+                <CursorArrowRippleIcon className="h-8 w-8 text-gray-400 group-hover:text-indigo-600 mb-2" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-indigo-600">Button</span>
+              </button>
+
+              {/* E-signature Tool */}
+              <button
+                onClick={() => {
+                  setActiveSection(document.sections[0]?.id);
+                  setElementType('interactive');
+                  setInteractiveForm({...interactiveForm, type: 'signature_field'});
+                  setShowElementPanel(true);
+                }}
+                className="w-full flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors group"
+              >
+                <FingerPrintIcon className="h-8 w-8 text-gray-400 group-hover:text-red-600 mb-2" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-red-600">E-sign</span>
               </button>
             </div>
-          </div>
 
-          {/* Document Info */}
-          <div className="bg-white shadow rounded-lg p-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Document Info</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Type:</span>
-                <span className="text-gray-900 capitalize">{document.type}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Status:</span>
-                <span className="text-gray-900 capitalize">{document.status}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Sections:</span>
-                <span className="text-gray-900">{document.sections.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Created:</span>
-                <span className="text-gray-900">{new Date(document.created_at).toLocaleDateString()}</span>
+            {/* Quick Actions */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <h4 className="text-sm font-medium text-gray-900 mb-3">Quick Actions</h4>
+              <div className="space-y-2">
+                <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                  💬 Add Comment
+                </button>
+                
+                <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                  📤 Share Document
+                </button>
+                
+                <button
+                  onClick={() => navigate(`/documents/${documentId}/analytics`)}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  📊 View Analytics
+                </button>
               </div>
             </div>
           </div>
