@@ -105,7 +105,7 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4">
       <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 w-full max-w-md shadow-2xl border border-white/20">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">EffyLoyalty</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">effyLoyalty</h1>
           <p className="text-white/70">Employee Recognition Platform</p>
         </div>
 
