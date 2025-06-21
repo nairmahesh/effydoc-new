@@ -8,6 +8,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import RFPBuilder from './pages/RFPBuilder';
 import Profile from './pages/Profile';
+import DocumentUpload from './pages/DocumentUpload';
+import DocumentEditor from './pages/DocumentEditor';
 import { PlusIcon, CloudArrowUpIcon, VideoCameraIcon, FingerPrintIcon, EyeIcon } from '@heroicons/react/24/outline';
 import './App.css';
 
@@ -187,6 +189,8 @@ function App() {
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="documents" element={<Documents />} />
+              <Route path="documents/upload" element={<DocumentUpload />} />
+              <Route path="documents/:documentId/edit" element={<DocumentEditor />} />
               <Route path="create" element={<CreateDocument />} />
               <Route path="rfp-builder" element={<RFPBuilder />} />
               <Route path="shared" element={<Documents />} />
