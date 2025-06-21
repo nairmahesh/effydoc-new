@@ -548,9 +548,49 @@ const Dashboard = () => {
                 </button>
               </div>
             </div>
-                
-            {/* Enhanced Team Members Table */}
-            <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+
+            {/* Team Management Tabs */}
+            <div className="bg-white rounded-xl shadow-sm border overflow-hidden mb-6">
+              <div className="border-b border-gray-200">
+                <nav className="flex">
+                  <button
+                    onClick={() => setTeamManagementTab('employees')}
+                    className={`px-6 py-4 text-sm font-medium transition-colors ${
+                      teamManagementTab === 'employees'
+                        ? 'border-b-2 border-blue-500 text-blue-600 bg-blue-50'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span>👥</span>
+                      <span>Employees ({teamMembers.length})</span>
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setTeamManagementTab('teams')}
+                    className={`px-6 py-4 text-sm font-medium transition-colors ${
+                      teamManagementTab === 'teams'
+                        ? 'border-b-2 border-blue-500 text-blue-600 bg-blue-50'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="flex items-center space-x-2">
+                      <span>🏢</span>
+                      <span>Teams ({Object.keys(getTeamsByDepartment()).length})</span>
+                    </span>
+                  </button>
+                </nav>
+              </div>
+
+              {/* Tab Content */}
+              <div className="p-6">
+                {teamManagementTab === 'employees' ? (
+                  /* Employees Tab Content */
+                  <div>
+                    <div className="mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">All Employees</h3>
+                      <p className="text-sm text-gray-600">Manage individual team members and their performance</p>
+                    </div>
                   <div className="px-6 py-4 border-b border-gray-200">
                     <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
                   </div>
