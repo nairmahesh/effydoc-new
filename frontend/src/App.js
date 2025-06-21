@@ -473,6 +473,8 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          ) : (
                 
                 {/* Enhanced Team Members Table */}
                 <div className="bg-white rounded-xl shadow-sm border overflow-hidden mb-6">
