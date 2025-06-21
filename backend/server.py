@@ -263,7 +263,7 @@ async def send_document_via_email(
         current_user.id, 
         current_user.full_name, 
         document_id, 
-        ActionType.create,  # Using CREATE for email send action
+        ActionType.CREATE,  # Using CREATE for email send action
         {
             "action": "email_sent",
             "recipients": email_data.get("recipients", []),
