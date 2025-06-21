@@ -10,26 +10,29 @@ logger = logging.getLogger(__name__)
 class OpenAIService:
     def __init__(self):
         self.client = None
+        self.api_key = None
         self.initialize_client()
     
     def initialize_client(self):
         """Initialize OpenAI client with API key"""
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        if not self.api_key:
             logger.warning("OpenAI API key not found. AI features will be disabled.")
             return
         
         try:
-            openai.api_key = api_key
-            self.client = openai.OpenAI(api_key=api_key)
+            # Set the API key for the openai module
+            openai.api_key = self.api_key
+            # Create OpenAI client instance
+            self.client = openai.OpenAI(api_key=self.api_key)
             logger.info("OpenAI client initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize OpenAI client: {e}")
 
     async def generate_rfp_content(self, request: RFPGenerationRequest) -> List[DocumentSection]:
         """Generate RFP content using OpenAI"""
-        if not self.client:
-            raise Exception("OpenAI client not initialized. Please provide API key.")
+        if not self.client or not self.api_key:
+            raise Exception("OpenAI client not initialized. Please check API key configuration.")
         
         try:
             prompt = self._create_rfp_prompt(request)
@@ -37,7 +40,7 @@ class OpenAIService:
             response = self.client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "You are an expert RFP writer. Generate comprehensive, professional RFP content in structured sections."},
+                    {"role": "system", "content": "You are an expert RFP writer. Generate comprehensive, professional RFP content in structured sections. Always respond in valid JSON format."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
@@ -91,7 +94,7 @@ Please structure the RFP with the following sections:
 9. Submission Guidelines
 10. Terms & Conditions
 
-Format the response as JSON with this structure:
+IMPORTANT: Format the response as valid JSON with this exact structure:
 {{
   "sections": [
     {{
@@ -102,13 +105,21 @@ Format the response as JSON with this structure:
   ]
 }}
 
-Make it professional, comprehensive, and industry-appropriate.
+Make it professional, comprehensive, and industry-appropriate. Ensure all content is realistic and detailed.
 """
         return prompt
 
     def _parse_rfp_response(self, content: str) -> List[DocumentSection]:
         """Parse OpenAI response into DocumentSection objects"""
         try:
+            # Clean the content to ensure it's valid JSON
+            content = content.strip()
+            if content.startswith('```json'):
+                content = content[7:]
+            if content.endswith('```'):
+                content = content[:-3]
+            content = content.strip()
+            
             # Try to parse as JSON first
             if content.startswith('{'):
                 data = json.loads(content)
@@ -184,7 +195,8 @@ Make it professional, comprehensive, and industry-appropriate.
 
     async def analyze_document_performance(self, document_data: Dict[str, Any], performance_data: Dict[str, Any]) -> List[AIRecommendation]:
         """Analyze document performance and generate recommendations"""
-        if not self.client:
+        if not self.client or not self.api_key:
+            logger.warning("OpenAI client not available for document analysis")
             return []
         
         try:
@@ -222,7 +234,7 @@ Format as JSON array with this structure:
             response = self.client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "You are an expert document performance analyst. Provide data-driven recommendations."},
+                    {"role": "system", "content": "You are an expert document performance analyst. Provide data-driven recommendations in valid JSON format."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.3,
@@ -230,6 +242,15 @@ Format as JSON array with this structure:
             )
             
             content = response.choices[0].message.content
+            
+            # Clean and parse JSON response
+            content = content.strip()
+            if content.startswith('```json'):
+                content = content[7:]
+            if content.endswith('```'):
+                content = content[:-3]
+            content = content.strip()
+            
             recommendations_data = json.loads(content)
             
             recommendations = []
@@ -253,7 +274,7 @@ Format as JSON array with this structure:
 
     async def generate_content_suggestions(self, document_type: str, industry: str, successful_patterns: List[Dict]) -> List[str]:
         """Generate content suggestions based on successful patterns"""
-        if not self.client:
+        if not self.client or not self.api_key:
             return []
         
         try:
@@ -271,7 +292,7 @@ Return as a simple JSON array of strings.
             response = self.client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "You are a content optimization expert. Provide specific, actionable suggestions."},
+                    {"role": "system", "content": "You are a content optimization expert. Provide specific, actionable suggestions in valid JSON format."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
@@ -279,6 +300,15 @@ Return as a simple JSON array of strings.
             )
             
             content = response.choices[0].message.content
+            
+            # Clean and parse JSON response
+            content = content.strip()
+            if content.startswith('```json'):
+                content = content[7:]
+            if content.endswith('```'):
+                content = content[:-3]
+            content = content.strip()
+            
             suggestions = json.loads(content)
             
             return suggestions if isinstance(suggestions, list) else []
