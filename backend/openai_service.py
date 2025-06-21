@@ -15,6 +15,18 @@ class OpenAIService:
     
     def initialize_client(self):
         """Initialize OpenAI client with API key"""
+        # Load environment variables directly from the .env file
+        from pathlib import Path
+        from dotenv import load_dotenv
+        
+        # Get the backend directory path
+        backend_dir = Path(__file__).parent
+        env_path = backend_dir / '.env'
+        
+        # Load environment variables from .env file
+        load_dotenv(env_path)
+        
+        # Get the API key
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             logger.warning("OpenAI API key not found. AI features will be disabled.")
@@ -25,7 +37,7 @@ class OpenAIService:
             openai.api_key = self.api_key
             # Create OpenAI client instance
             self.client = openai.OpenAI(api_key=self.api_key)
-            logger.info("OpenAI client initialized successfully")
+            logger.info(f"OpenAI client initialized successfully with API key starting with: {self.api_key[:10]}...")
         except Exception as e:
             logger.error(f"Failed to initialize OpenAI client: {e}")
 
