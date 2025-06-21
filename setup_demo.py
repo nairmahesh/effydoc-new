@@ -65,7 +65,8 @@ async def setup_demo_data():
                         "password": "password",
                         "role": "employee",
                         "company_id": company["id"],
-                        "manager_id": manager["id"]
+                        "manager_id": manager["id"],
+                        "department": emp["department"]
                     }
                     
                     emp_response = requests.post(f"{API_BASE}/auth/register", json=emp_data)
