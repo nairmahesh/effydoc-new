@@ -259,10 +259,13 @@ const Dashboard = () => {
       setPointsReason('');
       setShowGivePoints(false);
       fetchDashboardData();
+      
       alert('Points awarded successfully!');
     } catch (error) {
       console.error('Failed to give points:', error);
       alert('Failed to award points. Please try again.');
+    }
+  };
     }
   };
 
