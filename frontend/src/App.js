@@ -211,6 +211,7 @@ const Dashboard = () => {
   };
 
   const handleEmployeeClick = (employee) => {
+    setActiveTab('overview'); // Reset to overview tab when opening new profile
     fetchEmployeeProfile(employee.id);
   };
 
