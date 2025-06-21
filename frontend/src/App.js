@@ -560,7 +560,7 @@ const Dashboard = () => {
             </div>
 
             <div className="p-6 space-y-6">
-              {/* Statistics Cards */}
+              {/* Statistics Cards - Always Visible */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl p-4">
                   <div className="text-xl font-bold">{selectedEmployeeProfile.statistics.current_balance}</div>
@@ -580,145 +580,214 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Recent Recognition */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Recognition</h3>
-                <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {selectedEmployeeProfile.recent_recognition.slice(0, 5).map((recognition, index) => (
-                    <div key={index} className="bg-white border-l-4 border-blue-500 rounded-r-lg p-3">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">
-                            +{recognition.amount} points
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">{recognition.reason}</p>
-                          <div className="flex items-center justify-between mt-2">
-                            <p className="text-xs text-gray-500">
-                              From {recognition.from_user_name}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {formatDateTime(recognition.created_at)}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+              {/* Tab Navigation */}
+              <div className="border-b border-gray-200">
+                <nav className="-mb-px flex space-x-8">
+                  {[
+                    { id: 'overview', label: 'Overview', icon: '📊' },
+                    { id: 'badges', label: 'Badges', icon: '🏆' },
+                    { id: 'analytics', label: 'Analytics', icon: '📈' },
+                    { id: 'history', label: 'History', icon: '📋' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                        activeTab === tab.id
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <span className="mr-2">{tab.icon}</span>
+                      {tab.label}
+                    </button>
                   ))}
-                  {selectedEmployeeProfile.recent_recognition.length === 0 && (
-                    <p className="text-gray-500 text-center py-8">No recognition yet</p>
-                  )}
-                </div>
+                </nav>
               </div>
 
-              {/* Badges Earned */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Badges Earned</h3>
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {selectedEmployeeProfile.badges.map((userBadge, index) => (
-                    <div key={index} className="flex items-center space-x-4 p-3 bg-white rounded-lg shadow-sm">
-                      <div className="text-2xl">{userBadge.badge.icon}</div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900">{userBadge.badge.name}</h4>
-                        <p className="text-sm text-gray-600">{userBadge.badge.description}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Earned {formatDate(userBadge.earned_at)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                  {selectedEmployeeProfile.badges.length === 0 && (
-                    <p className="text-gray-500 text-center py-8">No badges earned yet</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Recognition Analytics */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Recognition Analytics</h3>
-                <div className="space-y-4">
-                  {/* By Reason */}
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">Top Recognition Reasons</h4>
-                    <div className="space-y-2">
-                      {Object.entries(selectedEmployeeProfile.statistics.recognition_reasons)
-                        .sort(([,a], [,b]) => b.total_points - a.total_points)
-                        .slice(0, 5)
-                        .map(([reason, data]) => (
-                        <div key={reason} className="flex justify-between items-center p-2 bg-white rounded-lg">
-                          <span className="text-sm text-gray-700 truncate flex-1 mr-2">{reason}</span>
-                          <div className="text-right">
-                            <span className="text-sm font-medium text-blue-600">{data.total_points} pts</span>
-                            <span className="text-xs text-gray-500 ml-2">({data.count}x)</span>
-                          </div>
-                        </div>
-                      ))}
-                      {Object.keys(selectedEmployeeProfile.statistics.recognition_reasons).length === 0 && (
-                        <p className="text-gray-500 text-center py-4">No recognition data available</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* By Month */}
-                  <div>
-                    <h4 className="font-semibold text-gray-700 mb-2">Points by Month</h4>
-                    <div className="space-y-2">
-                      {Object.entries(selectedEmployeeProfile.statistics.points_by_month)
-                        .sort(([a], [b]) => b.localeCompare(a))
-                        .slice(0, 4)
-                        .map(([month, points]) => (
-                        <div key={month} className="flex justify-between items-center p-2 bg-white rounded-lg">
-                          <span className="text-sm text-gray-700">{month}</span>
-                          <span className="text-sm font-medium text-green-600">{points} pts</span>
-                        </div>
-                      ))}
-                      {Object.keys(selectedEmployeeProfile.statistics.points_by_month).length === 0 && (
-                        <p className="text-gray-500 text-center py-4">No points data available</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Complete Recognition History */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Complete Recognition History</h3>
-                <div className="bg-white rounded-lg overflow-hidden">
-                  <div className="max-h-96 overflow-y-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-100 sticky top-0">
-                        <tr>
-                          <th className="text-left py-3 px-3 font-semibold">Date</th>
-                          <th className="text-left py-3 px-3 font-semibold">From</th>
-                          <th className="text-left py-3 px-3 font-semibold">Points</th>
-                          <th className="text-left py-3 px-3 font-semibold">Reason</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedEmployeeProfile.point_transactions.map((transaction, index) => (
-                          <tr key={index} className="border-b hover:bg-gray-50">
-                            <td className="py-3 px-3">{formatDate(transaction.created_at)}</td>
-                            <td className="py-3 px-3">{transaction.from_user_name}</td>
-                            <td className="py-3 px-3">
-                              <span className="text-green-600 font-medium">+{transaction.amount}</span>
-                            </td>
-                            <td className="py-3 px-3">
-                              <div className="max-w-xs truncate" title={transaction.reason}>
-                                {transaction.reason}
+              {/* Tab Content */}
+              <div className="min-h-96">
+                {/* Overview Tab */}
+                {activeTab === 'overview' && (
+                  <div className="space-y-6">
+                    {/* Recent Recognition */}
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Recognition</h3>
+                      <div className="space-y-3 max-h-80 overflow-y-auto">
+                        {selectedEmployeeProfile.recent_recognition.slice(0, 5).map((recognition, index) => (
+                          <div key={index} className="bg-white border-l-4 border-blue-500 rounded-r-lg p-3">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <p className="font-medium text-gray-900">
+                                  +{recognition.amount} points
+                                </p>
+                                <p className="text-sm text-gray-600 mt-1">{recognition.reason}</p>
+                                <div className="flex items-center justify-between mt-2">
+                                  <p className="text-xs text-gray-500">
+                                    From {recognition.from_user_name}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {formatDateTime(recognition.created_at)}
+                                  </p>
+                                </div>
                               </div>
-                            </td>
-                          </tr>
+                            </div>
+                          </div>
                         ))}
-                        {selectedEmployeeProfile.point_transactions.length === 0 && (
-                          <tr>
-                            <td colSpan="4" className="text-center py-8 text-gray-500">
-                              No recognition history available
-                            </td>
-                          </tr>
+                        {selectedEmployeeProfile.recent_recognition.length === 0 && (
+                          <p className="text-gray-500 text-center py-8">No recognition yet</p>
                         )}
-                      </tbody>
-                    </table>
+                      </div>
+                    </div>
+
+                    {/* Latest Badges */}
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-4">Latest Badges</h3>
+                      <div className="space-y-3">
+                        {selectedEmployeeProfile.badges.slice(0, 3).map((userBadge, index) => (
+                          <div key={index} className="flex items-center space-x-4 p-3 bg-white rounded-lg shadow-sm">
+                            <div className="text-2xl">{userBadge.badge.icon}</div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900">{userBadge.badge.name}</h4>
+                              <p className="text-sm text-gray-600">{userBadge.badge.description}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Earned {formatDate(userBadge.earned_at)}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                        {selectedEmployeeProfile.badges.length === 0 && (
+                          <p className="text-gray-500 text-center py-8">No badges earned yet</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* Badges Tab */}
+                {activeTab === 'badges' && (
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">All Badges Earned</h3>
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {selectedEmployeeProfile.badges.map((userBadge, index) => (
+                        <div key={index} className="flex items-center space-x-4 p-3 bg-white rounded-lg shadow-sm">
+                          <div className="text-2xl">{userBadge.badge.icon}</div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">{userBadge.badge.name}</h4>
+                            <p className="text-sm text-gray-600">{userBadge.badge.description}</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Earned {formatDate(userBadge.earned_at)}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                              {userBadge.badge.badge_type.replace('_', ' ')}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                      {selectedEmployeeProfile.badges.length === 0 && (
+                        <p className="text-gray-500 text-center py-8">No badges earned yet</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Analytics Tab */}
+                {activeTab === 'analytics' && (
+                  <div className="space-y-6">
+                    {/* Recognition Analytics */}
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-4">Recognition Analytics</h3>
+                      <div className="space-y-4">
+                        {/* By Reason */}
+                        <div>
+                          <h4 className="font-semibold text-gray-700 mb-2">Top Recognition Reasons</h4>
+                          <div className="space-y-2">
+                            {Object.entries(selectedEmployeeProfile.statistics.recognition_reasons)
+                              .sort(([,a], [,b]) => b.total_points - a.total_points)
+                              .slice(0, 5)
+                              .map(([reason, data]) => (
+                              <div key={reason} className="flex justify-between items-center p-3 bg-white rounded-lg">
+                                <span className="text-sm text-gray-700 truncate flex-1 mr-2">{reason}</span>
+                                <div className="text-right">
+                                  <span className="text-sm font-medium text-blue-600">{data.total_points} pts</span>
+                                  <span className="text-xs text-gray-500 ml-2">({data.count}x)</span>
+                                </div>
+                              </div>
+                            ))}
+                            {Object.keys(selectedEmployeeProfile.statistics.recognition_reasons).length === 0 && (
+                              <p className="text-gray-500 text-center py-4">No recognition data available</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* By Month */}
+                        <div>
+                          <h4 className="font-semibold text-gray-700 mb-2">Points by Month</h4>
+                          <div className="space-y-2">
+                            {Object.entries(selectedEmployeeProfile.statistics.points_by_month)
+                              .sort(([a], [b]) => b.localeCompare(a))
+                              .slice(0, 6)
+                              .map(([month, points]) => (
+                              <div key={month} className="flex justify-between items-center p-3 bg-white rounded-lg">
+                                <span className="text-sm text-gray-700">{month}</span>
+                                <span className="text-sm font-medium text-green-600">{points} pts</span>
+                              </div>
+                            ))}
+                            {Object.keys(selectedEmployeeProfile.statistics.points_by_month).length === 0 && (
+                              <p className="text-gray-500 text-center py-4">No points data available</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* History Tab */}
+                {activeTab === 'history' && (
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Complete Recognition History</h3>
+                    <div className="bg-white rounded-lg overflow-hidden">
+                      <div className="max-h-96 overflow-y-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-gray-100 sticky top-0">
+                            <tr>
+                              <th className="text-left py-3 px-3 font-semibold">Date</th>
+                              <th className="text-left py-3 px-3 font-semibold">From</th>
+                              <th className="text-left py-3 px-3 font-semibold">Points</th>
+                              <th className="text-left py-3 px-3 font-semibold">Reason</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {selectedEmployeeProfile.point_transactions.map((transaction, index) => (
+                              <tr key={index} className="border-b hover:bg-gray-50">
+                                <td className="py-3 px-3">{formatDate(transaction.created_at)}</td>
+                                <td className="py-3 px-3">{transaction.from_user_name}</td>
+                                <td className="py-3 px-3">
+                                  <span className="text-green-600 font-medium">+{transaction.amount}</span>
+                                </td>
+                                <td className="py-3 px-3">
+                                  <div className="max-w-xs truncate" title={transaction.reason}>
+                                    {transaction.reason}
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                            {selectedEmployeeProfile.point_transactions.length === 0 && (
+                              <tr>
+                                <td colSpan="4" className="text-center py-8 text-gray-500">
+                                  No recognition history available
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
