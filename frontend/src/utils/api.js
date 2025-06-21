@@ -51,9 +51,7 @@ api.interceptors.response.use(
 // Auth API
 export const authAPI = {
   login: async (email, password) => {
-    const response = await api.post('/auth/login', null, {
-      params: { email, password }
-    });
+    const response = await api.post('/auth/login', { email, password });
     if (response.data.access_token) {
       setToken(response.data.access_token);
     }
