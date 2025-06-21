@@ -256,7 +256,8 @@ async def register_user(user_data: UserCreate):
         name=user_data.name,
         role=user_data.role,
         company_id=user_data.company_id,
-        manager_id=user_data.manager_id
+        manager_id=user_data.manager_id,
+        department=user_data.department
     )
     
     user_dict = user.dict()
