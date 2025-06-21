@@ -17,7 +17,7 @@ import {
   EyeIcon,
   ChatBubbleLeftRightIcon,
   ShareIcon,
-  SaveIcon,
+  CheckIcon,
   SparklesIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
