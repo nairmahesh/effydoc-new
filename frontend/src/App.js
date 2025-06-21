@@ -266,8 +266,6 @@ const Dashboard = () => {
       alert('Failed to award points. Please try again.');
     }
   };
-    }
-  };
 
   const getRoleDisplay = (role) => {
     return role.split('_').map(word => 
