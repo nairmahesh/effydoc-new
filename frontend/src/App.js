@@ -169,11 +169,17 @@ const Dashboard = () => {
   const [badges, setBadges] = useState([]);
   const [showGivePoints, setShowGivePoints] = useState(false);
   const [showEmployeeProfile, setShowEmployeeProfile] = useState(false);
+  const [showCreateTask, setShowCreateTask] = useState(false);
+  const [showManageRewards, setShowManageRewards] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedEmployeeProfile, setSelectedEmployeeProfile] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [pointsAmount, setPointsAmount] = useState('');
   const [pointsReason, setPointsReason] = useState('');
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [taskPoints, setTaskPoints] = useState('');
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     fetchDashboardData();
