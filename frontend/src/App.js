@@ -767,8 +767,158 @@ const Dashboard = () => {
                     </div>
                   </div>
                 )}
-              </div>
-            )}
+                </div>
+              ) : (
+                /* Teams Tab Content */
+                <div>
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Department Teams</h3>
+                    <p className="text-sm text-gray-600">View and manage teams organized by departments</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Object.entries(getTeamsByDepartment()).map(([department, members]) => (
+                      <div key={department} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border hover:shadow-md transition-all">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center">
+                            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                              <span className="text-white text-xl font-bold">
+                                {department.charAt(0)}
+                              </span>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900">{department}</h4>
+                              <p className="text-sm text-gray-600">Department Team</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-blue-600">{members.length}</div>
+                            <div className="text-xs text-gray-500">Members</div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center p-2 bg-white rounded-lg">
+                            <span className="text-sm text-gray-700">Total Points</span>
+                            <span className="font-semibold text-green-600">
+                              {members.reduce((sum, member) => sum + member.point_balance, 0)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center p-2 bg-white rounded-lg">
+                            <span className="text-sm text-gray-700">Avg Performance</span>
+                            <span className="font-semibold text-purple-600">
+                              {Math.round(members.reduce((sum, member) => sum + member.point_balance, 0) / members.length) || 0}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => setSelectedTeam(department)}
+                          className="w-full mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+                        >
+                          View Team Members ({members.length})
+                        </button>
+
+                        {/* Top Performer Preview */}
+                        {members.length > 0 && (
+                          <div className="mt-4 p-3 bg-white rounded-lg">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-500">Top Performer:</span>
+                              <span className="text-xs font-medium text-gray-900">
+                                {members.sort((a, b) => b.point_balance - a.point_balance)[0]?.name}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Team Members Modal */}
+                  {selectedTeam && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                      <div className="bg-white rounded-xl w-full max-w-4xl max-h-[80vh] overflow-y-auto">
+                        <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+                          <div>
+                            <h3 className="text-xl font-bold text-gray-900">{selectedTeam} Team</h3>
+                            <p className="text-sm text-gray-600">
+                              {getTeamsByDepartment()[selectedTeam]?.length} members
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => setSelectedTeam(null)}
+                            className="text-gray-500 hover:text-gray-700 text-2xl"
+                          >
+                            ×
+                          </button>
+                        </div>
+
+                        <div className="p-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {getTeamsByDepartment()[selectedTeam]?.map((member) => (
+                              <div key={member.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                                <div className="flex items-center mb-3">
+                                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                    <span className="text-white text-sm font-semibold">
+                                      {member.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <h4 className="font-medium text-gray-900">{member.name}</h4>
+                                    <p className="text-xs text-gray-600">{getRoleDisplay(member.role)}</p>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm text-gray-600">Points</span>
+                                    <span className="font-semibold text-green-600">{member.point_balance}</span>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm text-gray-600">Status</span>
+                                    <span className={`text-xs px-2 py-1 rounded-full ${
+                                      member.point_balance >= 100 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : member.point_balance >= 50 
+                                        ? 'bg-yellow-100 text-yellow-800'
+                                        : 'bg-gray-100 text-gray-800'
+                                    }`}>
+                                      {member.point_balance >= 100 ? 'Excellent' : member.point_balance >= 50 ? 'Good' : 'Growing'}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="mt-3 flex space-x-2">
+                                  <button
+                                    onClick={() => {
+                                      setSelectedEmployee(member.id);
+                                      setSelectedTeam(null);
+                                      setShowGivePoints(true);
+                                    }}
+                                    className="flex-1 bg-blue-500 text-white py-1 px-2 rounded text-xs hover:bg-blue-600 transition-colors"
+                                  >
+                                    Reward
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedTeam(null);
+                                      handleEmployeeClick(member);
+                                    }}
+                                    className="flex-1 bg-gray-500 text-white py-1 px-2 rounded text-xs hover:bg-gray-600 transition-colors"
+                                  >
+                                    Profile
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )} {/* Modals */}
 
