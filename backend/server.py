@@ -1,10 +1,16 @@
+import sys
+from pathlib import Path
+
+# Add the backend directory to Python path
+backend_dir = Path(__file__).parent
+sys.path.append(str(backend_dir))
+
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, File, UploadFile
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 import os
 import logging
-from pathlib import Path
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import json
