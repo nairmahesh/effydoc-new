@@ -652,7 +652,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 )}
-              </>
+              </div>
             ) : (
               <>
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
