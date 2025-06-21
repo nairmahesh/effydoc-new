@@ -96,13 +96,18 @@ export const documentsAPI = {
   get: (id) => api.get(`/documents/${id}`),
   update: (id, data) => api.put(`/documents/${id}`, data),
   updateSection: (docId, sectionId, data) => api.put(`/documents/${docId}/sections/${sectionId}`, data),
+  updatePage: (docId, pageNumber, data) => api.put(`/documents/${docId}/pages/${pageNumber}`, data),
   addMultimedia: (docId, sectionId, data) => api.post(`/documents/${docId}/sections/${sectionId}/multimedia`, data),
   addInteractive: (docId, sectionId, data) => api.post(`/documents/${docId}/sections/${sectionId}/interactive`, data),
+  addMultimediaToPage: (docId, pageNumber, data) => api.post(`/documents/${docId}/pages/${pageNumber}/multimedia`, data),
+  addInteractiveToPage: (docId, pageNumber, data) => api.post(`/documents/${docId}/pages/${pageNumber}/interactive`, data),
   delete: (id) => api.delete(`/documents/${id}`),
   getAnalytics: (id) => api.get(`/documents/${id}/analytics`),
+  getPageAnalytics: (id) => api.get(`/documents/${id}/page-analytics`),
   getComments: (id) => api.get(`/documents/${id}/comments`),
   addComment: (id, data) => api.post(`/documents/${id}/comments`, data),
   sendEmail: (id, emailData) => api.post(`/documents/${id}/send-email`, emailData),
+  trackPageView: (data) => api.post('/tracking/page-view', data),
 };
 
 // AI API
