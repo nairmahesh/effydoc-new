@@ -434,11 +434,16 @@ async def get_team_members(current_user: User = Depends(get_current_user)):
             "role": {"$ne": "company_admin"}
         }).to_list(100)
     
-    # Remove password field
+    # Remove password field and convert ObjectId to string
+    result = []
     for member in team_members:
         member.pop("password", None)
+        # Convert _id to string if it exists
+        if "_id" in member and isinstance(member["_id"], ObjectId):
+            member["_id"] = str(member["_id"])
+        result.append(member)
     
-    return team_members
+    return result
 
 @api_router.get("/users/badges")
 async def get_user_badges(current_user: User = Depends(get_current_user)):
