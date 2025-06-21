@@ -171,6 +171,7 @@ const Dashboard = () => {
   const [showEmployeeProfile, setShowEmployeeProfile] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedEmployeeProfile, setSelectedEmployeeProfile] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
   const [pointsAmount, setPointsAmount] = useState('');
   const [pointsReason, setPointsReason] = useState('');
 
