@@ -516,12 +516,19 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Employee 360-Degree Profile Modal */}
+      {/* Employee 360-Degree Profile Side Panel */}
       {showEmployeeProfile && selectedEmployeeProfile && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
+            onClick={() => setShowEmployeeProfile(false)}
+          ></div>
+          
+          {/* Side Panel */}
+          <div className="fixed top-0 right-0 h-full w-full md:w-2/3 lg:w-1/2 xl:w-2/5 bg-white z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto">
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center shadow-sm">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
                   {selectedEmployeeProfile.employee.name}
@@ -544,98 +551,99 @@ const Dashboard = () => {
               </div>
               <button
                 onClick={() => setShowEmployeeProfile(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="text-gray-500 hover:text-gray-700 text-3xl leading-none p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
                 ×
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-6 space-y-6">
               {/* Statistics Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl p-4">
-                  <div className="text-2xl font-bold">{selectedEmployeeProfile.statistics.current_balance}</div>
-                  <div className="text-blue-100">Current Points</div>
+                  <div className="text-xl font-bold">{selectedEmployeeProfile.statistics.current_balance}</div>
+                  <div className="text-blue-100 text-sm">Current Points</div>
                 </div>
                 <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl p-4">
-                  <div className="text-2xl font-bold">{selectedEmployeeProfile.statistics.total_points_received}</div>
-                  <div className="text-green-100">Total Points Earned</div>
+                  <div className="text-xl font-bold">{selectedEmployeeProfile.statistics.total_points_received}</div>
+                  <div className="text-green-100 text-sm">Total Earned</div>
                 </div>
                 <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl p-4">
-                  <div className="text-2xl font-bold">{selectedEmployeeProfile.statistics.badges_earned}</div>
-                  <div className="text-yellow-100">Badges Earned</div>
+                  <div className="text-xl font-bold">{selectedEmployeeProfile.statistics.badges_earned}</div>
+                  <div className="text-yellow-100 text-sm">Badges</div>
                 </div>
                 <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl p-4">
-                  <div className="text-2xl font-bold">{selectedEmployeeProfile.statistics.recognition_count}</div>
-                  <div className="text-purple-100">Times Recognized</div>
+                  <div className="text-xl font-bold">{selectedEmployeeProfile.statistics.recognition_count}</div>
+                  <div className="text-purple-100 text-sm">Recognition</div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Recent Recognition */}
-                <div className="bg-white border rounded-xl p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Recognition</h3>
-                  <div className="space-y-4 max-h-64 overflow-y-auto">
-                    {selectedEmployeeProfile.recent_recognition.map((recognition, index) => (
-                      <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900">
-                              +{recognition.amount} points from {recognition.from_user_name}
+              {/* Recent Recognition */}
+              <div className="bg-gray-50 rounded-xl p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Recognition</h3>
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {selectedEmployeeProfile.recent_recognition.slice(0, 5).map((recognition, index) => (
+                    <div key={index} className="bg-white border-l-4 border-blue-500 rounded-r-lg p-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">
+                            +{recognition.amount} points
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">{recognition.reason}</p>
+                          <div className="flex items-center justify-between mt-2">
+                            <p className="text-xs text-gray-500">
+                              From {recognition.from_user_name}
                             </p>
-                            <p className="text-sm text-gray-600 mt-1">{recognition.reason}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-gray-500">
                               {formatDateTime(recognition.created_at)}
                             </p>
                           </div>
-                          <div className="text-right">
-                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                              {getRoleDisplay(recognition.from_user_role)}
-                            </span>
-                          </div>
                         </div>
                       </div>
-                    ))}
-                    {selectedEmployeeProfile.recent_recognition.length === 0 && (
-                      <p className="text-gray-500 text-center py-8">No recognition yet</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Badges Earned */}
-                <div className="bg-white border rounded-xl p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Badges Earned</h3>
-                  <div className="space-y-4 max-h-64 overflow-y-auto">
-                    {selectedEmployeeProfile.badges.map((userBadge, index) => (
-                      <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                        <div className="text-3xl">{userBadge.badge.icon}</div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900">{userBadge.badge.name}</h4>
-                          <p className="text-sm text-gray-600">{userBadge.badge.description}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Earned {formatDate(userBadge.earned_at)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    {selectedEmployeeProfile.badges.length === 0 && (
-                      <p className="text-gray-500 text-center py-8">No badges earned yet</p>
-                    )}
-                  </div>
+                    </div>
+                  ))}
+                  {selectedEmployeeProfile.recent_recognition.length === 0 && (
+                    <p className="text-gray-500 text-center py-8">No recognition yet</p>
+                  )}
                 </div>
               </div>
 
-              {/* Recognition Breakdown */}
-              <div className="mt-8 bg-white border rounded-xl p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Recognition Breakdown</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Badges Earned */}
+              <div className="bg-gray-50 rounded-xl p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Badges Earned</h3>
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                  {selectedEmployeeProfile.badges.map((userBadge, index) => (
+                    <div key={index} className="flex items-center space-x-4 p-3 bg-white rounded-lg shadow-sm">
+                      <div className="text-2xl">{userBadge.badge.icon}</div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">{userBadge.badge.name}</h4>
+                        <p className="text-sm text-gray-600">{userBadge.badge.description}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Earned {formatDate(userBadge.earned_at)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {selectedEmployeeProfile.badges.length === 0 && (
+                    <p className="text-gray-500 text-center py-8">No badges earned yet</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Recognition Analytics */}
+              <div className="bg-gray-50 rounded-xl p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Recognition Analytics</h3>
+                <div className="space-y-4">
                   {/* By Reason */}
                   <div>
-                    <h4 className="font-semibold text-gray-700 mb-3">By Reason</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">Top Recognition Reasons</h4>
                     <div className="space-y-2">
-                      {Object.entries(selectedEmployeeProfile.statistics.recognition_reasons).map(([reason, data]) => (
-                        <div key={reason} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-700 truncate">{reason}</span>
+                      {Object.entries(selectedEmployeeProfile.statistics.recognition_reasons)
+                        .sort(([,a], [,b]) => b.total_points - a.total_points)
+                        .slice(0, 5)
+                        .map(([reason, data]) => (
+                        <div key={reason} className="flex justify-between items-center p-2 bg-white rounded-lg">
+                          <span className="text-sm text-gray-700 truncate flex-1 mr-2">{reason}</span>
                           <div className="text-right">
                             <span className="text-sm font-medium text-blue-600">{data.total_points} pts</span>
                             <span className="text-xs text-gray-500 ml-2">({data.count}x)</span>
@@ -650,13 +658,13 @@ const Dashboard = () => {
 
                   {/* By Month */}
                   <div>
-                    <h4 className="font-semibold text-gray-700 mb-3">Points by Month</h4>
+                    <h4 className="font-semibold text-gray-700 mb-2">Points by Month</h4>
                     <div className="space-y-2">
                       {Object.entries(selectedEmployeeProfile.statistics.points_by_month)
                         .sort(([a], [b]) => b.localeCompare(a))
-                        .slice(0, 6)
+                        .slice(0, 4)
                         .map(([month, points]) => (
-                        <div key={month} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <div key={month} className="flex justify-between items-center p-2 bg-white rounded-lg">
                           <span className="text-sm text-gray-700">{month}</span>
                           <span className="text-sm font-medium text-green-600">{points} pts</span>
                         </div>
@@ -670,49 +678,49 @@ const Dashboard = () => {
               </div>
 
               {/* Complete Recognition History */}
-              <div className="mt-8 bg-white border rounded-xl p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Complete Recognition History</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-2">Date</th>
-                        <th className="text-left py-2">From</th>
-                        <th className="text-left py-2">Points</th>
-                        <th className="text-left py-2">Reason</th>
-                        <th className="text-left py-2">Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedEmployeeProfile.point_transactions.map((transaction, index) => (
-                        <tr key={index} className="border-b hover:bg-gray-50">
-                          <td className="py-2">{formatDate(transaction.created_at)}</td>
-                          <td className="py-2">{transaction.from_user_name}</td>
-                          <td className="py-2">
-                            <span className="text-green-600 font-medium">+{transaction.amount}</span>
-                          </td>
-                          <td className="py-2 max-w-xs truncate">{transaction.reason}</td>
-                          <td className="py-2">
-                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                              {transaction.transaction_type.replace('_', ' ')}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                      {selectedEmployeeProfile.point_transactions.length === 0 && (
+              <div className="bg-gray-50 rounded-xl p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Complete Recognition History</h3>
+                <div className="bg-white rounded-lg overflow-hidden">
+                  <div className="max-h-96 overflow-y-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-100 sticky top-0">
                         <tr>
-                          <td colSpan="5" className="text-center py-8 text-gray-500">
-                            No recognition history available
-                          </td>
+                          <th className="text-left py-3 px-3 font-semibold">Date</th>
+                          <th className="text-left py-3 px-3 font-semibold">From</th>
+                          <th className="text-left py-3 px-3 font-semibold">Points</th>
+                          <th className="text-left py-3 px-3 font-semibold">Reason</th>
                         </tr>
-                      )}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {selectedEmployeeProfile.point_transactions.map((transaction, index) => (
+                          <tr key={index} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-3">{formatDate(transaction.created_at)}</td>
+                            <td className="py-3 px-3">{transaction.from_user_name}</td>
+                            <td className="py-3 px-3">
+                              <span className="text-green-600 font-medium">+{transaction.amount}</span>
+                            </td>
+                            <td className="py-3 px-3">
+                              <div className="max-w-xs truncate" title={transaction.reason}>
+                                {transaction.reason}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                        {selectedEmployeeProfile.point_transactions.length === 0 && (
+                          <tr>
+                            <td colSpan="4" className="text-center py-8 text-gray-500">
+                              No recognition history available
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
