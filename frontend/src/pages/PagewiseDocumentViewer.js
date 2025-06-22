@@ -144,7 +144,8 @@ const PagewiseDocumentViewer = () => {
   };
 
   const goToPage = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= document.total_pages) {
+    const totalPages = document?.total_pages || document?.pages?.length || document?.sections?.length || 1;
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
       trackPageView(true); // Track current page before leaving
       setCurrentPage(pageNumber);
     }
