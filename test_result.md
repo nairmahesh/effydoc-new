@@ -264,6 +264,24 @@ backend:
         agent: "testing"
         comment: "Verified comment creation and retrieval endpoints work correctly"
         
+  - task: "Email Integration Functionality"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Implemented email integration with connection management, notification settings, and email signature"
+      - working: false
+        agent: "testing"
+        comment: "Found an issue in the send_document_via_email function where it was using ActionType.create instead of ActionType.CREATE"
+      - working: true
+        agent: "testing"
+        comment: "Fixed the issue in the send_document_via_email function. All email integration endpoints are now working correctly, including adding/removing email connections, setting primary email, updating notification settings, updating email signature, and sending documents via email."
+        
   - task: "Document Upload and Page-wise Viewing"
     implemented: true
     working: true
