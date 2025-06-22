@@ -397,9 +397,8 @@ metadata:
 test_plan:
   current_focus:
     - "AI RFP Builder Interface"
-  stuck_tasks:
-    - "AI RFP Builder Interface"
-  test_all: false
+  stuck_tasks: []
+  test_all: true
   test_priority: "high_first"
 
 agent_communication:
