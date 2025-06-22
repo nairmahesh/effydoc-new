@@ -524,6 +524,21 @@ async def get_document(
     """Get a specific document"""
     document_data = await check_document_access(document_id, current_user, "view")
     
+    # Clean document data to handle None values
+    if 'sections' in document_data and document_data['sections']:
+        for section in document_data['sections']:
+            if section.get('title') is None:
+                section['title'] = "Untitled Section"
+            if section.get('content') is None:
+                section['content'] = ""
+    
+    if 'pages' in document_data and document_data['pages']:
+        for page in document_data['pages']:
+            if page.get('title') is None:
+                page['title'] = f"Page {page.get('page_number', 1)}"
+            if page.get('content') is None:
+                page['content'] = ""
+    
     # Log view activity
     await log_activity(current_user.id, current_user.full_name, document_id, ActionType.VIEW, {})
     
