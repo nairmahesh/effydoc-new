@@ -628,22 +628,22 @@ const PagewiseDocumentViewer = () => {
               <input
                 type="number"
                 min="1"
-                max={document.total_pages}
+                max={totalPages}
                 value={currentPage}
                 onChange={(e) => {
                   const page = parseInt(e.target.value);
-                  if (page >= 1 && page <= document.total_pages) {
+                  if (page >= 1 && page <= totalPages) {
                     goToPage(page);
                   }
                 }}
                 className="w-16 px-2 py-1 text-center border border-gray-300 rounded text-sm"
               />
-              <span className="text-sm text-gray-700">of {document.total_pages}</span>
+              <span className="text-sm text-gray-700">of {totalPages}</span>
             </div>
 
             <button
               onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === document.total_pages}
+              disabled={currentPage === totalPages}
               className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
