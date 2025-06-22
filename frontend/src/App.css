@@ -1,3 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for the application */
+.notification-banner {
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(100%); 
+  }
+  to { 
+    transform: translateY(0); 
+  }
+}
+
+/* Outlook integration specific styles */
+.outlook-integration-button {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  transition: all 0.3s ease;
+}
+
+.outlook-integration-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+}
+
+/* Email connect banner pulse animation */
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.pulse-soft {
+  animation: pulse-soft 2s infinite;
+}
+
 .App {
     text-align: center;
 }
