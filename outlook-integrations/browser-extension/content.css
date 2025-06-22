@@ -1,0 +1,391 @@
+/* effyDOC Browser Extension - Content Styles */
+
+/* Panel Styles */
+#effydoc-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 350px;
+    height: 100vh;
+    background: white;
+    border-left: 1px solid #e5e7eb;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    transition: transform 0.3s ease-in-out;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 14px;
+    overflow-y: auto;
+}
+
+.effydoc-panel-hidden {
+    transform: translateX(100%);
+}
+
+.effydoc-panel-visible {
+    transform: translateX(0);
+}
+
+.effydoc-panel-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.effydoc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #4f46e5;
+    color: white;
+}
+
+.effydoc-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.effydoc-logo svg {
+    color: white;
+}
+
+.effydoc-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.effydoc-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Content */
+#effydoc-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+/* Authentication */
+.effydoc-auth {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.effydoc-auth h3 {
+    margin: 0 0 8px 0;
+    color: #1f2937;
+    font-size: 18px;
+}
+
+.effydoc-auth p {
+    margin: 0 0 20px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Buttons */
+.effydoc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.effydoc-btn-primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.effydoc-btn-primary:hover {
+    background: #4338ca;
+}
+
+.effydoc-btn-small {
+    padding: 4px 8px;
+    font-size: 12px;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.effydoc-btn-small:hover {
+    background: #e5e7eb;
+}
+
+/* User Info */
+.effydoc-user-info {
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #f0f9ff;
+    border-radius: 8px;
+    border-left: 4px solid #0ea5e9;
+}
+
+.effydoc-user-info p {
+    margin: 0;
+    color: #0369a1;
+    font-weight: 500;
+}
+
+/* Quick Actions */
+.effydoc-quick-actions {
+    margin-bottom: 24px;
+}
+
+.effydoc-quick-actions h4 {
+    margin: 0 0 12px 0;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.effydoc-action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.effydoc-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+    color: #374151;
+}
+
+.effydoc-action-btn:hover {
+    background: #f9fafb;
+    border-color: #4f46e5;
+    color: #4f46e5;
+}
+
+.effydoc-action-btn svg {
+    margin-bottom: 4px;
+    color: inherit;
+}
+
+/* Documents */
+.effydoc-documents {
+    margin-bottom: 24px;
+}
+
+.effydoc-documents h4 {
+    margin: 0 0 12px 0;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.effydoc-document-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.effydoc-document-item:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.effydoc-document-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.effydoc-document-info h5 {
+    margin: 0 0 4px 0;
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.effydoc-document-info p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: capitalize;
+}
+
+.effydoc-document-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+/* Analytics */
+.effydoc-analytics h4 {
+    margin: 0 0 12px 0;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.effydoc-analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.effydoc-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.effydoc-metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4f46e5;
+    line-height: 1;
+}
+
+.effydoc-metric-label {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* Loading */
+.effydoc-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    color: #6b7280;
+}
+
+.effydoc-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #4f46e5;
+    border-radius: 50%;
+    animation: effydoc-spin 1s linear infinite;
+    margin-bottom: 8px;
+}
+
+@keyframes effydoc-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.effydoc-empty {
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+}
+
+.effydoc-empty p {
+    margin: 4px 0;
+    font-size: 13px;
+}
+
+/* Toolbar Button */
+.effydoc-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-left: 8px;
+}
+
+.effydoc-toolbar-btn:hover {
+    background: #4338ca;
+}
+
+.effydoc-toolbar-btn svg {
+    color: white;
+}
+
+/* Compose Button */
+.effydoc-compose-btn {
+    padding: 6px 12px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background-color 0.2s;
+}
+
+.effydoc-compose-btn:hover {
+    background: #4338ca;
+}
+
+/* Notification */
+.effydoc-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1f2937;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10001;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.effydoc-notification-show {
+    transform: translateX(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #effydoc-panel {
+        width: 100%;
+    }
+    
+    .effydoc-action-grid {
+        grid-template-columns: 1fr;
+    }
+}
