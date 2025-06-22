@@ -189,18 +189,48 @@
 
     <script>
         function downloadOutlookAddin() {
-            // In a real implementation, this would trigger a download
-            alert('Outlook Add-in download will be available soon!\n\nFor now, please contact your administrator to deploy the add-in from the integration files.');
+            // Trigger actual download of Outlook Add-in
+            const link = document.createElement('a');
+            link.href = '/outlook-addin.tar.gz';
+            link.download = 'effydoc-outlook-addin.tar.gz';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success message
+            setTimeout(() => {
+                alert('✅ Outlook Add-in downloaded successfully!\n\n📋 Next steps:\n1. Extract the files\n2. Host on your HTTPS server\n3. Update domain URLs in manifest.xml\n4. Install via Outlook → Settings → Manage Add-ins');
+            }, 500);
         }
 
         function downloadBrowserExtension() {
-            // In a real implementation, this would trigger a download
-            alert('Browser Extension download will be available soon!\n\nFor now, you can install it by loading the unpacked extension from the integration files.');
+            // Trigger actual download of Browser Extension
+            const link = document.createElement('a');
+            link.href = '/browser-extension.tar.gz';
+            link.download = 'effydoc-browser-extension.tar.gz';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success message
+            setTimeout(() => {
+                alert('✅ Browser Extension downloaded successfully!\n\n📋 Next steps:\n1. Extract the files\n2. Open Chrome/Edge → Extensions\n3. Enable Developer Mode\n4. Click "Load unpacked" → Select folder');
+            }, 500);
         }
 
         function downloadCompletePackage() {
-            // This would download the actual package
-            window.location.href = '/effydoc-outlook-integrations.tar.gz';
+            // This downloads the complete package
+            const link = document.createElement('a');
+            link.href = '/effydoc-outlook-integrations.tar.gz';
+            link.download = 'effydoc-complete-integrations.tar.gz';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success message
+            setTimeout(() => {
+                alert('✅ Complete Integration Package downloaded!\n\n📦 Includes:\n• Outlook Add-in files\n• Browser Extension files\n• Installation guides\n• Configuration scripts\n\nCheck the README.md for detailed setup instructions.');
+            }, 500);
         }
     </script>
 </body>
