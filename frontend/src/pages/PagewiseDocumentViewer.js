@@ -423,7 +423,7 @@ const PagewiseDocumentViewer = () => {
               </button>
               
               <h1 className="text-xl font-semibold text-gray-900">
-                Page {currentPage} of {document.total_pages}
+                Page {currentPage} of {totalPages}
               </h1>
             </div>
 
