@@ -363,6 +363,16 @@ const PagewiseDocumentViewer = () => {
   }
 
   const currentPageData = getCurrentPage();
+  const totalPages = document?.total_pages || document?.pages?.length || document?.sections?.length || 1;
+  const pagesList = document?.pages && document.pages.length > 0 
+    ? document.pages 
+    : document?.sections?.map((section, index) => ({
+        page_number: index + 1,
+        title: section.title || `Page ${index + 1}`,
+        content: section.content || '',
+        multimedia_elements: section.multimedia_elements || [],
+        interactive_elements: section.interactive_elements || []
+      })) || [];
 
   return (
     <div className="h-screen flex bg-gray-100">
@@ -371,11 +381,11 @@ const PagewiseDocumentViewer = () => {
         <div className="w-64 bg-white shadow-lg">
           <div className="p-4 border-b">
             <h3 className="font-medium text-gray-900">{document.title}</h3>
-            <p className="text-sm text-gray-500">{document.total_pages} pages</p>
+            <p className="text-sm text-gray-500">{totalPages} pages</p>
           </div>
           
           <div className="overflow-y-auto h-full pb-20">
-            {document.pages.map((page) => (
+            {pagesList.map((page) => (
               <div
                 key={page.page_number}
                 onClick={() => goToPage(page.page_number)}
