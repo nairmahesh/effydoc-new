@@ -1,0 +1,74 @@
+{
+  "manifest_version": 3,
+  "name": "effyDOC Platform - Outlook Integration",
+  "version": "1.0.0",
+  "description": "Access your effyDOC documents, create proposals, and track analytics directly from Outlook Web App",
+  
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "identity"
+  ],
+  
+  "host_permissions": [
+    "https://outlook.live.com/*",
+    "https://outlook.office365.com/*",
+    "https://outlook.office.com/*",
+    "https://your-effydoc-domain.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "https://outlook.live.com/*",
+        "https://outlook.office365.com/*",
+        "https://outlook.office.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "effyDOC Platform",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "panel.html",
+        "panel.js",
+        "panel.css",
+        "icons/*"
+      ],
+      "matches": [
+        "https://outlook.live.com/*",
+        "https://outlook.office365.com/*",
+        "https://outlook.office.com/*"
+      ]
+    }
+  ],
+  
+  "externally_connectable": {
+    "matches": [
+      "https://your-effydoc-domain.com/*"
+    ]
+  }
+}
