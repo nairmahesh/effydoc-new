@@ -492,7 +492,29 @@ async def get_documents(
         query["status"] = status
     
     documents = await documents_collection.find(query).to_list(1000)
-    return [Document(**doc) for doc in documents]
+    
+    # Clean up documents to handle None values in sections
+    cleaned_documents = []
+    for doc in documents:
+        # Clean sections - handle None titles
+        if 'sections' in doc and doc['sections']:
+            for section in doc['sections']:
+                if section.get('title') is None:
+                    section['title'] = "Untitled Section"
+                if section.get('content') is None:
+                    section['content'] = ""
+        
+        # Clean pages - handle None titles  
+        if 'pages' in doc and doc['pages']:
+            for page in doc['pages']:
+                if page.get('title') is None:
+                    page['title'] = f"Page {page.get('page_number', 1)}"
+                if page.get('content') is None:
+                    page['content'] = ""
+        
+        cleaned_documents.append(doc)
+    
+    return [Document(**doc) for doc in cleaned_documents]
 
 @api_router.get("/documents/{document_id}", response_model=Document)
 async def get_document(
