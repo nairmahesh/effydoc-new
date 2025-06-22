@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import EmailConnectBanner from '../Common/EmailConnectBanner';
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -40,6 +41,9 @@ const Layout = () => {
           onClick={closeSidebar}
         />
       )}
+
+      {/* Email Connect Banner for new users */}
+      <EmailConnectBanner />
 
       <Toaster
         position="top-right"
