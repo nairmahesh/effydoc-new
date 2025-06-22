@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 
 # Get the backend URL from the frontend .env file
-BACKEND_URL = "https://17ed463c-9548-4e22-8aff-b664035c3bd4.preview.emergentagent.com/api"
+BACKEND_URL = "https://4aa54517-8e64-4037-8338-35ac94bb76b8.preview.emergentagent.com/api"
 
 def test_ai_rfp_generation_comprehensive():
     """Comprehensive test of the AI RFP generation endpoint"""
