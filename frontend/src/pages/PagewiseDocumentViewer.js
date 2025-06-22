@@ -124,7 +124,22 @@ const PagewiseDocumentViewer = () => {
   };
 
   const getCurrentPage = () => {
-    if (!document || !document.pages) return null;
+    if (!document || !document.pages || !Array.isArray(document.pages)) {
+      // Fallback: create page from sections if pages don't exist
+      if (document?.sections && Array.isArray(document.sections) && document.sections.length > 0) {
+        const section = document.sections[currentPage - 1];
+        if (section) {
+          return {
+            page_number: currentPage,
+            title: section.title || `Page ${currentPage}`,
+            content: section.content || '',
+            multimedia_elements: section.multimedia_elements || [],
+            interactive_elements: section.interactive_elements || []
+          };
+        }
+      }
+      return null;
+    }
     return document.pages.find(page => page.page_number === currentPage);
   };
 
