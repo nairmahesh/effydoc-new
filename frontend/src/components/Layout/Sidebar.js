@@ -34,6 +34,32 @@ const Sidebar = ({ isOpen, onClose }) => {
   const NavItem = ({ item }) => {
     const isActive = location.pathname === item.href;
     
+    if (item.external) {
+      return (
+        <a
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+            isActive
+              ? 'bg-indigo-100 text-indigo-700'
+              : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+          }`}
+        >
+          <item.icon
+            className={`mr-3 h-5 w-5 transition-colors ${
+              isActive ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'
+            }`}
+            aria-hidden="true"
+          />
+          {item.name}
+          <svg className="ml-auto h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      );
+    }
+    
     return (
       <NavLink
         to={item.href}
