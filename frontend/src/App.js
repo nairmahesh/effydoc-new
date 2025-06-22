@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { documentsAPI } from './utils/api';
 import Layout from './components/Layout/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -10,9 +12,17 @@ import RFPBuilder from './pages/RFPBuilder';
 import Profile from './pages/Profile';
 import DocumentUpload from './pages/DocumentUpload';
 import DocumentEditor from './pages/DocumentEditor';
-import { CloudArrowUpIcon, VideoCameraIcon, FingerPrintIcon, EyeIcon, DocumentTextIcon, SparklesIcon, ClockIcon, CursorArrowRippleIcon } from '@heroicons/react/24/outline';
-import { documentsAPI } from './api/documents';
-import toast from 'react-hot-toast';
+import { 
+  PlusIcon, 
+  CloudArrowUpIcon, 
+  VideoCameraIcon, 
+  FingerPrintIcon, 
+  EyeIcon,
+  DocumentTextIcon,
+  SparklesIcon,
+  ClockIcon,
+  CursorArrowRippleIcon
+} from '@heroicons/react/24/outline';
 import './App.css';
 
 // Protected Route Component
