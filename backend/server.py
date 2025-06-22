@@ -320,8 +320,12 @@ async def upload_document(
 ):
     """Upload a document file and convert it to page-wise editable format"""
     import os
-    import PyPDF2
-    import docx
+    try:
+        import PyPDF2
+        import docx
+    except ImportError as e:
+        raise HTTPException(status_code=500, detail=f"Required library not available: {str(e)}")
+    
     from io import BytesIO
     
     # Validate file type
@@ -336,70 +340,88 @@ async def upload_document(
         # Extract pages based on file type
         pages = []
         if file.content_type == "application/pdf":
-            # Extract text from PDF page by page
-            pdf_reader = PyPDF2.PdfReader(BytesIO(content))
-            for page_num, page in enumerate(pdf_reader.pages, 1):
-                page_text = page.extract_text()
-                if page_text.strip():  # Only create page if there's content
-                    page_obj = DocumentPage(
-                        page_number=page_num,
-                        title=f"Page {page_num}",
-                        content=page_text.strip()
-                    )
-                    pages.append(page_obj)
+            try:
+                # Extract text from PDF page by page
+                pdf_reader = PyPDF2.PdfReader(BytesIO(content))
+                for page_num, page in enumerate(pdf_reader.pages, 1):
+                    try:
+                        page_text = page.extract_text()
+                        if page_text and page_text.strip():  # Only create page if there's content
+                            page_obj = DocumentPage(
+                                page_number=page_num,
+                                title=f"Page {page_num}",
+                                content=page_text.strip()
+                            )
+                            pages.append(page_obj)
+                    except Exception as e:
+                        # If page extraction fails, create empty page
+                        page_obj = DocumentPage(
+                            page_number=page_num,
+                            title=f"Page {page_num}",
+                            content=f"[Content extraction failed for this page: {str(e)}]"
+                        )
+                        pages.append(page_obj)
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Failed to process PDF: {str(e)}")
         
         elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            # Extract text from DOCX and split into pages
-            doc = docx.Document(BytesIO(content))
-            page_content = []
-            words_per_page = 500  # Approximate words per page
-            current_words = 0
-            current_page_text = []
-            
-            for paragraph in doc.paragraphs:
-                para_text = paragraph.text.strip()
-                if para_text:
-                    words_in_para = len(para_text.split())
-                    if current_words + words_in_para > words_per_page and current_page_text:
-                        # Create new page
-                        page_content.append('\n'.join(current_page_text))
-                        current_page_text = [para_text]
-                        current_words = words_in_para
-                    else:
-                        current_page_text.append(para_text)
-                        current_words += words_in_para
-            
-            # Add last page
-            if current_page_text:
-                page_content.append('\n'.join(current_page_text))
-            
-            # Create DocumentPage objects
-            for page_num, content_text in enumerate(page_content, 1):
-                page_obj = DocumentPage(
-                    page_number=page_num,
-                    title=f"Page {page_num}",
-                    content=content_text
-                )
-                pages.append(page_obj)
-        
-        elif file.content_type == "text/plain":
-            # Plain text file - split into pages by line count
-            text_content = content.decode('utf-8')
-            lines = text_content.split('\n')
-            lines_per_page = 50  # Approximate lines per page
-            
-            page_num = 1
-            for i in range(0, len(lines), lines_per_page):
-                page_lines = lines[i:i + lines_per_page]
-                page_text = '\n'.join(page_lines).strip()
-                if page_text:
+            try:
+                # Extract text from DOCX and split into pages
+                doc = docx.Document(BytesIO(content))
+                page_content = []
+                words_per_page = 500  # Approximate words per page
+                current_words = 0
+                current_page_text = []
+                
+                for paragraph in doc.paragraphs:
+                    para_text = paragraph.text.strip()
+                    if para_text:
+                        words_in_para = len(para_text.split())
+                        if current_words + words_in_para > words_per_page and current_page_text:
+                            # Create new page
+                            page_content.append('\n'.join(current_page_text))
+                            current_page_text = [para_text]
+                            current_words = words_in_para
+                        else:
+                            current_page_text.append(para_text)
+                            current_words += words_in_para
+                
+                # Add last page
+                if current_page_text:
+                    page_content.append('\n'.join(current_page_text))
+                
+                # Create DocumentPage objects
+                for page_num, content_text in enumerate(page_content, 1):
                     page_obj = DocumentPage(
                         page_number=page_num,
                         title=f"Page {page_num}",
-                        content=page_text
+                        content=content_text
                     )
                     pages.append(page_obj)
-                    page_num += 1
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Failed to process DOCX: {str(e)}")
+        
+        elif file.content_type == "text/plain":
+            try:
+                # Plain text file - split into pages by line count
+                text_content = content.decode('utf-8')
+                lines = text_content.split('\n')
+                lines_per_page = 50  # Approximate lines per page
+                
+                page_num = 1
+                for i in range(0, len(lines), lines_per_page):
+                    page_lines = lines[i:i + lines_per_page]
+                    page_text = '\n'.join(page_lines).strip()
+                    if page_text:
+                        page_obj = DocumentPage(
+                            page_number=page_num,
+                            title=f"Page {page_num}",
+                            content=page_text
+                        )
+                        pages.append(page_obj)
+                        page_num += 1
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Failed to process text file: {str(e)}")
         
         # If no pages created, create a single page
         if not pages:
