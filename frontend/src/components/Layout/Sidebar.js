@@ -75,7 +75,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Footer */}
         <div className="p-4 border-t border-gray-200">
           <div className="text-xs text-gray-500 text-center">
-            Powered by effyDoc
+            effyDOC Platform v1.0
           </div>
         </div>
       </div>
