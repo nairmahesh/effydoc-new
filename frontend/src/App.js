@@ -10,7 +10,9 @@ import RFPBuilder from './pages/RFPBuilder';
 import Profile from './pages/Profile';
 import DocumentUpload from './pages/DocumentUpload';
 import DocumentEditor from './pages/DocumentEditor';
-import { PlusIcon, CloudArrowUpIcon, VideoCameraIcon, FingerPrintIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { CloudArrowUpIcon, VideoCameraIcon, FingerPrintIcon, EyeIcon, DocumentTextIcon, SparklesIcon, ClockIcon, CursorArrowRippleIcon } from '@heroicons/react/24/outline';
+import { documentsAPI } from './api/documents';
+import toast from 'react-hot-toast';
 import './App.css';
 
 // Protected Route Component
