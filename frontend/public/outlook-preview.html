@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>effyDOC Outlook Integration - Visual Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .outlook-mockup {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            padding: 2px;
+        }
+        .outlook-content {
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .ribbon-button {
+            background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 1px solid #d1d5db;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .task-pane {
+            background: #fafafa;
+            border-left: 1px solid #e0e0e0;
+        }
+        .browser-extension {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: 8px;
+            padding: 2px;
+        }
+        .notification-banner {
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                    🎨 effyDOC Outlook Integration Design Preview
+                </h1>
+                <p class="text-xl text-gray-600">
+                    See exactly how effyDOC will look and work in your Outlook environment
+                </p>
+            </div>
+
+            <!-- Outlook Desktop Add-in Preview -->
+            <div class="mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+                    📧 Outlook Desktop/Office 365 Add-in
+                </h2>
+                
+                <div class="outlook-mockup mb-8">
+                    <div class="outlook-content">
+                        <!-- Outlook Header/Ribbon -->
+                        <div class="bg-blue-600 text-white p-2 text-sm font-medium">
+                            📧 Microsoft Outlook - Mail
+                        </div>
+                        
+                        <!-- Ribbon with effyDOC Button -->
+                        <div class="bg-gray-100 p-3 border-b border-gray-300 flex items-center space-x-2">
+                            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                <span>Home</span>
+                                <span>|</span>
+                                <span>Send/Receive</span>
+                                <span>|</span>
+                            </div>
+                            <div class="ribbon-button px-4 py-2 rounded text-sm font-medium text-gray-700 flex items-center space-x-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span class="text-indigo-600 font-semibold">effyDOC</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <!-- Main Outlook Content -->
+                            <div class="flex-1 p-6">
+                                <div class="bg-white rounded-lg shadow p-6">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">📝 Compose Email</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">To:</label>
+                                            <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="recipient@company.com">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Subject:</label>
+                                            <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Proposal for your review">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Message:</label>
+                                            <div class="mt-1 border border-gray-300 rounded-md p-3">
+                                                <p class="text-gray-700 mb-4">Hi there,</p>
+                                                <p class="text-gray-700 mb-4">Please find our proposal attached below:</p>
+                                                
+                                                <!-- effyDOC Document Attachment -->
+                                                <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 my-4">
+                                                    <div class="flex items-center mb-2">
+                                                        <svg class="w-5 h-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                        </svg>
+                                                        <strong class="text-indigo-900">effyDOC Document</strong>
+                                                    </div>
+                                                    <h4 class="text-indigo-900 font-semibold mb-1">
+                                                        <a href="#" class="hover:underline">Website Development Proposal</a>
+                                                    </h4>
+                                                    <p class="text-indigo-700 text-sm">Proposal • Updated 2 hours ago</p>
+                                                    <p class="text-indigo-600 text-xs mt-2">📊 This document includes tracking analytics and interactive elements</p>
+                                                </div>
+                                                
+                                                <p class="text-gray-700">Best regards,<br>Your Team</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- effyDOC Task Pane -->
+                            <div class="w-80 task-pane">
+                                <div class="p-4 border-b border-gray-200 bg-indigo-600 text-white">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <span class="font-semibold">effyDOC</span>
+                                        </div>
+                                        <button class="text-white hover:bg-indigo-700 rounded p-1">×</button>
+                                    </div>
+                                    <p class="text-indigo-100 text-sm mt-1">Access your documents and analytics</p>
+                                </div>
+                                
+                                <div class="p-4">
+                                    <!-- User Info -->
+                                    <div class="bg-blue-50 p-3 rounded-lg mb-4 border-l-4 border-blue-400">
+                                        <p class="text-blue-800 font-medium text-sm">Welcome, John Doe!</p>
+                                    </div>
+                                    
+                                    <!-- Quick Actions -->
+                                    <div class="mb-6">
+                                        <h4 class="font-medium text-gray-900 text-sm mb-3">Quick Actions</h4>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-center">
+                                                <svg class="w-4 h-4 text-indigo-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                                <span class="text-xs text-gray-700">New Proposal</span>
+                                            </button>
+                                            <button class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-center">
+                                                <svg class="w-4 h-4 text-green-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                                </svg>
+                                                <span class="text-xs text-gray-700">New Contract</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Recent Documents -->
+                                    <div class="mb-6">
+                                        <h4 class="font-medium text-gray-900 text-sm mb-3">Recent Documents</h4>
+                                        <div class="space-y-2">
+                                            <div class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                                <h5 class="text-sm font-medium text-gray-900">Website Development Proposal</h5>
+                                                <p class="text-xs text-gray-600">proposal • 2 hours ago</p>
+                                                <div class="flex space-x-1 mt-2">
+                                                    <button class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs">Attach</button>
+                                                    <button class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">View</button>
+                                                </div>
+                                            </div>
+                                            <div class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                                <h5 class="text-sm font-medium text-gray-900">Service Agreement</h5>
+                                                <p class="text-xs text-gray-600">contract • 1 day ago</p>
+                                                <div class="flex space-x-1 mt-2">
+                                                    <button class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs">Attach</button>
+                                                    <button class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">View</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Analytics Summary -->
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 text-sm mb-3">Analytics Summary</h4>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="p-2 bg-blue-50 rounded-lg text-center">
+                                                <div class="text-lg font-bold text-blue-600">127</div>
+                                                <div class="text-xs text-blue-700">Total Views</div>
+                                            </div>
+                                            <div class="p-2 bg-green-50 rounded-lg text-center">
+                                                <div class="text-lg font-bold text-green-600">8</div>
+                                                <div class="text-xs text-green-700">Active Docs</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser Extension Preview -->
+            <div class="mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+                    🌐 Browser Extension for Outlook Web App
+                </h2>
+                
+                <div class="browser-extension mb-8">
+                    <div class="bg-white rounded-lg overflow-hidden">
+                        <!-- Browser Tab Bar -->
+                        <div class="bg-gray-200 p-2 flex items-center space-x-2">
+                            <div class="flex space-x-1">
+                                <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                                <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                            </div>
+                            <div class="flex-1 bg-white rounded px-3 py-1 text-sm text-gray-600">
+                                outlook.office.com
+                            </div>
+                            <div class="w-6 h-6 bg-indigo-100 rounded flex items-center justify-center">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Outlook Web App -->
+                        <div class="bg-blue-600 text-white p-3 text-sm font-medium">
+                            📧 Outlook - Mail
+                        </div>
+                        
+                        <div class="flex">
+                            <!-- Main Outlook Content -->
+                            <div class="flex-1 p-6">
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-lg font-medium text-gray-900">✍️ New Message</h3>
+                                        <button class="bg-indigo-600 text-white px-3 py-1 rounded text-sm flex items-center space-x-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <span>📄 Attach effyDOC</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <input type="text" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="To: client@example.com">
+                                        <input type="text" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="Subject: Project Proposal">
+                                        <div class="border border-gray-300 rounded p-3 h-32 bg-white">
+                                            <p class="text-gray-700 text-sm">Dear Client,</p>
+                                            <p class="text-gray-700 text-sm mt-2">Please find our detailed proposal below:</p>
+                                            
+                                            <!-- Attached Document Preview -->
+                                            <div class="bg-indigo-50 border border-indigo-200 rounded p-3 mt-3 text-sm">
+                                                <div class="flex items-center">
+                                                    <svg class="w-4 h-4 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                    </svg>
+                                                    <strong class="text-indigo-900">effyDOC Document</strong>
+                                                </div>
+                                                <h4 class="font-medium text-indigo-900 mt-1">Project Proposal v2.1</h4>
+                                                <p class="text-indigo-700 text-xs">📊 Trackable • Interactive elements included</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- effyDOC Extension Panel -->
+                            <div class="w-80 bg-white border-l border-gray-200">
+                                <div class="p-4 border-b border-gray-200 bg-indigo-600 text-white">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <span class="font-semibold">effyDOC</span>
+                                        </div>
+                                        <button class="text-white hover:bg-indigo-700 rounded p-1">×</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4">
+                                    <!-- Connection Status -->
+                                    <div class="bg-green-50 p-3 rounded-lg mb-4 border-l-4 border-green-400">
+                                        <p class="text-green-800 font-medium text-sm">Connected to effyDOC</p>
+                                        <p class="text-green-600 text-xs">Welcome, Sarah Wilson!</p>
+                                    </div>
+                                    
+                                    <!-- Quick Stats -->
+                                    <div class="grid grid-cols-2 gap-3 mb-4">
+                                        <div class="p-2 bg-blue-50 rounded text-center">
+                                            <div class="text-lg font-bold text-blue-600">12</div>
+                                            <div class="text-xs text-blue-700">Documents</div>
+                                        </div>
+                                        <div class="p-2 bg-purple-50 rounded text-center">
+                                            <div class="text-lg font-bold text-purple-600">89</div>
+                                            <div class="text-xs text-purple-700">Total Views</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quick Actions -->
+                                    <div class="space-y-2 mb-6">
+                                        <button class="w-full bg-indigo-600 text-white py-2 px-3 rounded text-sm font-medium flex items-center justify-center space-x-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <span>New Proposal</span>
+                                        </button>
+                                        <button class="w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded text-sm font-medium flex items-center justify-center space-x-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                            <span>New Contract</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Recent Documents -->
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 text-sm mb-3">Recent Documents</h4>
+                                        <div class="space-y-2">
+                                            <div class="p-2 border border-gray-200 rounded hover:bg-gray-50">
+                                                <h5 class="text-sm font-medium text-gray-900">Project Proposal v2.1</h5>
+                                                <p class="text-xs text-gray-600">proposal • 1 hour ago</p>
+                                                <div class="flex space-x-1 mt-1">
+                                                    <button class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs">Attach</button>
+                                                    <button class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">View</button>
+                                                </div>
+                                            </div>
+                                            <div class="p-2 border border-gray-200 rounded hover:bg-gray-50">
+                                                <h5 class="text-sm font-medium text-gray-900">Marketing Contract</h5>
+                                                <p class="text-xs text-gray-600">contract • 3 hours ago</p>
+                                                <div class="flex space-x-1 mt-1">
+                                                    <button class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs">Attach</button>
+                                                    <button class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">View</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extension Popup Preview -->
+            <div class="mb-16">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                    🔽 Browser Extension Popup (When clicked)
+                </h2>
+                
+                <div class="max-w-sm mx-auto">
+                    <div class="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+                        <!-- Header -->
+                        <div class="bg-indigo-600 text-white p-4 text-center">
+                            <div class="flex items-center justify-center space-x-2 text-lg font-semibold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>effyDOC Platform</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="p-4">
+                            <!-- Status -->
+                            <div class="text-center mb-4">
+                                <p class="text-green-600 font-medium">Connected to effyDOC</p>
+                                <p class="text-gray-600 text-sm">Welcome, John Doe!</p>
+                            </div>
+                            
+                            <!-- Stats -->
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="bg-white border rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-indigo-600">15</div>
+                                    <div class="text-xs text-gray-600">Documents</div>
+                                </div>
+                                <div class="bg-white border rounded-lg p-3 text-center">
+                                    <div class="text-xl font-bold text-indigo-600">234</div>
+                                    <div class="text-xs text-gray-600">Total Views</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="space-y-2">
+                                <button class="w-full bg-indigo-600 text-white py-3 px-4 rounded font-medium flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <span>New Proposal</span>
+                                </button>
+                                <button class="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded font-medium flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                    </svg>
+                                    <span>New Contract</span>
+                                </button>
+                                <button class="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded font-medium flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                    </svg>
+                                    <span>Open Dashboard</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Highlights -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                    ✨ Key Features You'll Experience
+                </h2>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">One-Click Access</h3>
+                        <p class="text-gray-600 text-sm">Access all your effyDOC documents without leaving Outlook</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Smart Attachments</h3>
+                        <p class="text-gray-600 text-sm">Attach trackable documents with beautiful, professional formatting</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Real-Time Analytics</h3>
+                        <p class="text-gray-600 text-sm">See document engagement metrics directly in Outlook</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
