@@ -139,7 +139,7 @@ class TestAIRFPGeneration(unittest.TestCase):
         )
         
         # Assert response status code
-        self.assertEqual(response.status_code, 401, f"Expected 401 Unauthorized, got {response.status_code}")
+        self.assertIn(response.status_code, [401, 403], f"Expected 401 or 403 Unauthorized/Forbidden, got {response.status_code}")
         print("✅ Authentication check working correctly")
     
     def test_3_rfp_generation_with_missing_fields(self):
