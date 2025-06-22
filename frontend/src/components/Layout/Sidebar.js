@@ -60,8 +60,8 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Logo */}
         <div className="flex items-center justify-center h-16 px-4 bg-indigo-600">
           <div className="flex items-center">
-            <SparklesIcon className="h-8 w-8 text-white mr-2" />
-            <span className="text-xl font-bold text-white">DocPlatform</span>
+            <DocumentTextIcon className="h-8 w-8 text-white mr-2" />
+            <span className="text-xl font-bold text-white">effyDOC</span>
           </div>
         </div>
 
