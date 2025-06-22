@@ -25,6 +25,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { name: 'Templates', href: '/templates', icon: DocumentDuplicateIcon },
     { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
     { name: 'Activity', href: '/activity', icon: EyeIcon },
+    { name: 'Outlook Integration', href: '/integrations.html', icon: EnvelopeIcon, external: true },
     { name: 'Profile', href: '/profile', icon: UserCircleIcon },
     { name: 'Settings', href: '/settings', icon: CogIcon },
   ];
