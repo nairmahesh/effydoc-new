@@ -264,7 +264,7 @@ backend:
         agent: "testing"
         comment: "Verified comment creation and retrieval endpoints work correctly"
         
-  - task: "Email Integration Functionality"
+  - task: "Document Upload and Page-wise Viewing"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -273,14 +273,8 @@ backend:
     needs_retesting: false
     status_history:
       - working: true
-        agent: "main"
-        comment: "Implemented email integration with connection management, notification settings, and email signature"
-      - working: false
         agent: "testing"
-        comment: "Found an issue in the send_document_via_email function where it was using ActionType.create instead of ActionType.CREATE"
-      - working: true
-        agent: "testing"
-        comment: "Fixed the issue in the send_document_via_email function. All email integration endpoints are now working correctly, including adding/removing email connections, setting primary email, updating notification settings, updating email signature, and sending documents via email."
+        comment: "Verified document upload functionality works correctly. The /api/documents/upload endpoint successfully processes text files into a page-wise structure. The uploaded document contains both sections (for backward compatibility) and pages arrays. The total_pages field is set correctly, and the document ID is returned for navigation. Document retrieval via /api/documents/{document_id} works properly, returning the document with both sections and pages arrays populated. Each page has the correct structure with page_number, title, and content. Additionally, tested page updates, adding multimedia and interactive elements to pages, and page view tracking - all working correctly."
 
 frontend:
   - task: "API Integration Layer"
