@@ -318,6 +318,7 @@ function App() {
               <Route path="documents" element={<Documents />} />
               <Route path="documents/upload" element={<DocumentUpload />} />
               <Route path="documents/:documentId/edit" element={<DocumentEditor />} />
+              <Route path="documents/:documentId/preview" element={<PagewiseDocumentViewer />} />
               <Route path="create" element={<CreateDocument />} />
               <Route path="rfp-builder" element={<RFPBuilder />} />
               <Route path="shared" element={<Documents />} />
