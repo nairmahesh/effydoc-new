@@ -471,7 +471,7 @@ async def upload_document(
         
         elif file.content_type == "text/plain":
             try:
-                # Plain text - convert to HTML with proper formatting
+                # Plain text - convert to HTML with proper formatting - PRESERVE ALIGNMENT
                 text_content = content.decode('utf-8')
                 
                 # Convert line breaks to proper HTML
@@ -479,6 +479,8 @@ async def upload_document(
                 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
                            line-height: 1.6; 
                            white-space: pre-wrap; 
+                           text-align: left;
+                           width: 100%;
                            padding: 20px;">
                     {text_content}
                 </div>
