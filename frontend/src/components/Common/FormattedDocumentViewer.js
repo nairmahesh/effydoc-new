@@ -353,6 +353,5 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
     </div>
   );
 };
-};
 
 export default FormattedDocumentViewer;
