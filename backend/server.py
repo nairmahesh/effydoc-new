@@ -405,14 +405,89 @@ async def upload_document(
                 </div>
                 """
                 
-                # Split into logical pages based on page breaks or content length
-                # For now, create one page with all content
-                page_obj = DocumentPage(
-                    page_number=1,
-                    title=title or file.filename.rsplit('.', 1)[0],
-                    content=document_html  # Store as HTML instead of plain text
-                )
-                pages.append(page_obj)
+                # Split into logical pages based on page breaks and content
+                # Look for page breaks in the HTML content and split accordingly
+                def split_html_into_pages(html_content, max_chars_per_page=3000):
+                    """Split HTML content into multiple pages based on content length and structure"""
+                    pages = []
+                    
+                    # First, try to split by explicit page breaks
+                    if '<div style="page-break-before:' in html_content or '<p style="page-break-before:' in html_content:
+                        # Split by page breaks
+                        parts = html_content.split('page-break-before:')
+                        for i, part in enumerate(parts):
+                            if i == 0:
+                                pages.append(part)
+                            else:
+                                # Find the end of the style and include it with the content
+                                end_style = part.find('">')
+                                if end_style != -1:
+                                    pages.append(part[end_style+2:])
+                                else:
+                                    pages.append(part)
+                    else:
+                        # Split by content length and HTML structure
+                        import re
+                        # Remove the outer div wrapper for splitting
+                        inner_content = html_content
+                        if inner_content.startswith('<div style='):
+                            start = inner_content.find('>') + 1
+                            end = inner_content.rfind('</div>')
+                            if start > 0 and end > start:
+                                inner_content = inner_content[start:end]
+                        
+                        # Split by paragraphs and headings
+                        elements = re.split(r'(</?(?:p|h[1-6]|div|ul|ol|table)[^>]*>)', inner_content)
+                        elements = [elem for elem in elements if elem.strip()]
+                        
+                        current_page = ""
+                        current_length = 0
+                        
+                        for element in elements:
+                            element_length = len(element.strip())
+                            
+                            # If adding this element would exceed the page limit and we have content
+                            if current_length + element_length > max_chars_per_page and current_page.strip():
+                                pages.append(current_page.strip())
+                                current_page = element
+                                current_length = element_length
+                            else:
+                                current_page += element
+                                current_length += element_length
+                        
+                        # Add the last page if it has content
+                        if current_page.strip():
+                            pages.append(current_page.strip())
+                    
+                    # If no pages were created, return the original content as one page
+                    if not pages:
+                        pages = [html_content]
+                    
+                    return pages
+                
+                # Split the content into pages
+                page_contents = split_html_into_pages(document_html)
+                
+                # Create page objects for each page
+                for page_num, page_content in enumerate(page_contents, 1):
+                    # Wrap each page content with proper styling
+                    formatted_page_content = f"""
+                    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                               line-height: 1.6; 
+                               width: 100%;
+                               text-align: left;
+                               padding: 20px;
+                               background: white;">
+                        {page_content}
+                    </div>
+                    """
+                    
+                    page_obj = DocumentPage(
+                        page_number=page_num,
+                        title=f"Page {page_num}" if len(page_contents) > 1 else (title or file.filename.rsplit('.', 1)[0]),
+                        content=formatted_page_content
+                    )
+                    pages.append(page_obj)
                 
             except Exception as e:
                 raise HTTPException(status_code=400, detail=f"Failed to process DOCX with formatting: {str(e)}")
