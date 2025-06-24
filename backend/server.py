@@ -18,7 +18,7 @@ import json
 # Import our custom modules
 from models import *
 from database import Database, get_collection, create_indexes
-from auth import get_current_active_user, require_role, check_document_access, create_access_token, verify_password, get_password_hash
+from auth import get_current_active_user, require_role, check_document_access, create_access_token, verify_password, get_password_hash, ACCESS_TOKEN_EXPIRE_MINUTES
 from openai_service import openai_service
 
 ROOT_DIR = Path(__file__).parent
