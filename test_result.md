@@ -459,7 +459,7 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Enhanced Document Upload with Formatting Preservation"
+    - "Document Preview Functionality"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
