@@ -419,7 +419,7 @@ async def upload_document(
         
         elif file.content_type == "application/pdf":
             try:
-                if not extract_text:
+                if not extract_text_bool:
                     # Store PDF as base64 for native PDF viewing (preserves layout, images, etc.)
                     pdf_base64 = base64.b64encode(content).decode()
                     page_obj = DocumentPage(
