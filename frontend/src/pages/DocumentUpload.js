@@ -18,6 +18,7 @@ const DocumentUpload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [title, setTitle] = useState('');
+  const [extractText, setExtractText] = useState(true); // New option for text extraction
 
   const handleDrag = (e) => {
     e.preventDefault();
