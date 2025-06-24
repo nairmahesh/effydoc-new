@@ -85,6 +85,8 @@ const DocumentUpload = () => {
       const response = await documentsAPI.upload(formData);
       
       toast.success('Document uploaded successfully!');
+      // Access the document ID directly from the response, not from response.data
+      // The backend returns { document: { id: ... }, ... } not { data: { document: { id: ... } } }
       navigate(`/documents/${response.document.id}/preview`); // Navigate to preview instead of edit
     } catch (error) {
       console.error('Error uploading document:', error);
