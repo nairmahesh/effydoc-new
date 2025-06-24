@@ -469,8 +469,14 @@ const PagewiseDocumentViewer = () => {
           <div className="flex-1 p-8 overflow-y-auto">
             <div 
               ref={pageRef}
-              className="max-w-4xl mx-auto bg-white shadow-lg min-h-[11in] p-8 relative"
-              style={{ aspectRatio: '8.5/11' }}
+              className="max-w-4xl mx-auto bg-white shadow-lg min-h-[11in] relative google-docs-page"
+              style={{ 
+                aspectRatio: '8.5/11',
+                padding: '1in',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif',
+                lineHeight: '1.6',
+                color: '#202124'
+              }}
             >
               {/* Page Header */}
               {editing && (
