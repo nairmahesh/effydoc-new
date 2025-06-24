@@ -304,7 +304,7 @@ def test_multipage_document_functionality():
         assert target_page, f"Target page {target_page_num} not found in document"
         assert len(target_page["multimedia_elements"]) > 0, f"No multimedia elements found on page {target_page_num}"
         assert target_page["multimedia_elements"][0]["type"] == "image", "Multimedia element type mismatch"
-        assert target_page["multimedia_elements"][0]["title"] == "Test Image on Page 3", "Multimedia element title mismatch"
+        assert target_page["multimedia_elements"][0]["title"] == f"Test Image on Page {target_page_num}", "Multimedia element title mismatch"
         
         print("✅ Adding multimedia to a specific page working")
         
