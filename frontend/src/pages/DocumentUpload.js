@@ -85,7 +85,7 @@ const DocumentUpload = () => {
       const response = await documentsAPI.upload(formData);
       
       toast.success('Document uploaded successfully!');
-      navigate(`/documents/${response.data.document.id}/preview`); // Navigate to preview instead of edit
+      navigate(`/documents/${response.document.id}/preview`); // Navigate to preview instead of edit
     } catch (error) {
       console.error('Error uploading document:', error);
       toast.error('Failed to upload document. Please try again.');
