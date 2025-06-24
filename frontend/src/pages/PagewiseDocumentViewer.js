@@ -442,14 +442,23 @@ const PagewiseDocumentViewer = () => {
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setEditing(!editing)}
-                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                   editing 
-                    ? 'text-green-700 bg-green-100 hover:bg-green-200' 
-                    : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                    ? 'text-white bg-green-600 hover:bg-green-700' 
+                    : 'text-white bg-indigo-600 hover:bg-indigo-700'
                 }`}
               >
-                {editing ? <CheckIcon className="h-4 w-4 mr-1 inline" /> : <PencilIcon className="h-4 w-4 mr-1 inline" />}
-                {editing ? 'Done' : 'Edit'}
+                {editing ? (
+                  <>
+                    <CheckIcon className="h-4 w-4 mr-1 inline" />
+                    Save Changes
+                  </>
+                ) : (
+                  <>
+                    <PencilIcon className="h-4 w-4 mr-1 inline" />
+                    Edit Document
+                  </>
+                )}
               </button>
 
               <button
