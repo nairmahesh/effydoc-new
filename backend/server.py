@@ -318,18 +318,24 @@ async def upload_document(
     title: str = None,
     current_user: User = Depends(get_current_active_user)
 ):
-    """Upload a document file and convert it to page-wise editable format"""
+    """Upload a document file and convert it to Google Docs-like format with formatting preserved"""
     import os
+    import base64
+    from io import BytesIO
+    
     try:
-        import PyPDF2
+        import mammoth
         import docx
+        from PIL import Image
     except ImportError as e:
         raise HTTPException(status_code=500, detail=f"Required library not available: {str(e)}")
     
-    from io import BytesIO
-    
     # Validate file type
-    allowed_types = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"]
+    allowed_types = [
+        "application/pdf", 
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
+        "text/plain"
+    ]
     if file.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Unsupported file type. Please upload PDF, DOCX, or TXT files.")
     
@@ -337,107 +343,143 @@ async def upload_document(
         # Read file content
         content = await file.read()
         
-        # Extract pages based on file type
+        # Process document based on type to preserve formatting
         pages = []
-        if file.content_type == "application/pdf":
+        document_html = ""
+        
+        if file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             try:
-                # Extract text from PDF page by page
+                # Use Mammoth to convert DOCX to HTML with formatting preserved
+                result = mammoth.convert_to_html(BytesIO(content))
+                document_html = result.value  # The generated HTML
+                
+                # Handle images and convert to base64
+                def convert_image_to_base64(image):
+                    try:
+                        image_bytes = image.open()
+                        pil_image = Image.open(image_bytes)
+                        buffer = BytesIO()
+                        # Convert to RGB if necessary
+                        if pil_image.mode in ('RGBA', 'LA', 'P'):
+                            pil_image = pil_image.convert('RGB')
+                        pil_image.save(buffer, format='JPEG', quality=90)
+                        img_data = buffer.getvalue()
+                        buffer.close()
+                        return f"data:image/jpeg;base64,{base64.b64encode(img_data).decode()}"
+                    except Exception as e:
+                        print(f"Image conversion error: {e}")
+                        return ""
+                
+                # Convert images to base64 and embed them
+                if hasattr(result, 'images'):
+                    for image in result.images:
+                        base64_image = convert_image_to_base64(image)
+                        if base64_image:
+                            # Replace image references with base64 data
+                            document_html = document_html.replace(
+                                f'src="{image.alt_text}"', 
+                                f'src="{base64_image}"'
+                            )
+                
+                # Clean up and enhance HTML styling
+                document_html = f"""
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                           line-height: 1.6; 
+                           max-width: 800px; 
+                           margin: 0 auto; 
+                           padding: 20px;
+                           background: white;">
+                    {document_html}
+                </div>
+                """
+                
+                # Split into logical pages based on page breaks or content length
+                # For now, create one page with all content
+                page_obj = DocumentPage(
+                    page_number=1,
+                    title=title or file.filename.rsplit('.', 1)[0],
+                    content=document_html  # Store as HTML instead of plain text
+                )
+                pages.append(page_obj)
+                
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Failed to process DOCX with formatting: {str(e)}")
+        
+        elif file.content_type == "application/pdf":
+            try:
+                # For PDF, we still extract text but wrap it in proper HTML
+                import PyPDF2
                 pdf_reader = PyPDF2.PdfReader(BytesIO(content))
+                
                 for page_num, page in enumerate(pdf_reader.pages, 1):
                     try:
                         page_text = page.extract_text()
-                        if page_text and page_text.strip():  # Only create page if there's content
+                        if page_text and page_text.strip():
+                            # Convert plain text to properly formatted HTML
+                            formatted_html = f"""
+                            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                                       line-height: 1.6; 
+                                       white-space: pre-wrap; 
+                                       padding: 20px;">
+                                {page_text.strip()}
+                            </div>
+                            """
                             page_obj = DocumentPage(
                                 page_number=page_num,
                                 title=f"Page {page_num}",
-                                content=page_text.strip()
+                                content=formatted_html
                             )
                             pages.append(page_obj)
                     except Exception as e:
-                        # If page extraction fails, create empty page
                         page_obj = DocumentPage(
                             page_number=page_num,
                             title=f"Page {page_num}",
-                            content=f"[Content extraction failed for this page: {str(e)}]"
+                            content=f"<p>[Content extraction failed: {str(e)}]</p>"
                         )
                         pages.append(page_obj)
             except Exception as e:
                 raise HTTPException(status_code=400, detail=f"Failed to process PDF: {str(e)}")
         
-        elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            try:
-                # Extract text from DOCX and split into pages
-                doc = docx.Document(BytesIO(content))
-                page_content = []
-                words_per_page = 500  # Approximate words per page
-                current_words = 0
-                current_page_text = []
-                
-                for paragraph in doc.paragraphs:
-                    para_text = paragraph.text.strip()
-                    if para_text:
-                        words_in_para = len(para_text.split())
-                        if current_words + words_in_para > words_per_page and current_page_text:
-                            # Create new page
-                            page_content.append('\n'.join(current_page_text))
-                            current_page_text = [para_text]
-                            current_words = words_in_para
-                        else:
-                            current_page_text.append(para_text)
-                            current_words += words_in_para
-                
-                # Add last page
-                if current_page_text:
-                    page_content.append('\n'.join(current_page_text))
-                
-                # Create DocumentPage objects
-                for page_num, content_text in enumerate(page_content, 1):
-                    page_obj = DocumentPage(
-                        page_number=page_num,
-                        title=f"Page {page_num}",
-                        content=content_text
-                    )
-                    pages.append(page_obj)
-            except Exception as e:
-                raise HTTPException(status_code=400, detail=f"Failed to process DOCX: {str(e)}")
-        
         elif file.content_type == "text/plain":
             try:
-                # Plain text file - split into pages by line count
+                # Plain text - convert to HTML with proper formatting
                 text_content = content.decode('utf-8')
-                lines = text_content.split('\n')
-                lines_per_page = 50  # Approximate lines per page
                 
-                page_num = 1
-                for i in range(0, len(lines), lines_per_page):
-                    page_lines = lines[i:i + lines_per_page]
-                    page_text = '\n'.join(page_lines).strip()
-                    if page_text:
-                        page_obj = DocumentPage(
-                            page_number=page_num,
-                            title=f"Page {page_num}",
-                            content=page_text
-                        )
-                        pages.append(page_obj)
-                        page_num += 1
+                # Convert line breaks to proper HTML
+                formatted_html = f"""
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                           line-height: 1.6; 
+                           white-space: pre-wrap; 
+                           padding: 20px;">
+                    {text_content}
+                </div>
+                """
+                
+                page_obj = DocumentPage(
+                    page_number=1,
+                    title="Document Content",
+                    content=formatted_html
+                )
+                pages.append(page_obj)
             except Exception as e:
                 raise HTTPException(status_code=400, detail=f"Failed to process text file: {str(e)}")
         
-        # If no pages created, create a single page
+        # If no pages created, create a default page
         if not pages:
             page_obj = DocumentPage(
                 page_number=1,
                 title="Page 1",
-                content="Document content could not be extracted properly. Please edit this page."
+                content="<p>Document content could not be extracted properly. Please edit this page.</p>"
             )
             pages.append(page_obj)
         
-        # Create legacy sections for backward compatibility
+        # Create legacy sections for backward compatibility (convert HTML to markdown for sections)
         sections = []
         for i, page in enumerate(pages):
+            # For sections, we'll store a simplified version
             section = DocumentSection(
                 title=page.title,
-                content=page.content,
+                content=page.content,  # Keep HTML content for rich editing
                 order=i + 1
             )
             sections.append(section)
@@ -450,17 +492,18 @@ async def upload_document(
             type=DocumentType.PROPOSAL,
             owner_id=current_user.id,
             organization=current_user.organization,
-            sections=sections,  # Legacy support
-            pages=pages,  # New page-wise structure
+            sections=sections,  # HTML content preserved
+            pages=pages,  # HTML content preserved
             total_pages=len(pages),
             collaborators=[],
-            tags=["uploaded", "imported", "page-wise"],
+            tags=["uploaded", "imported", "formatted"],
             metadata={
                 "original_filename": file.filename,
                 "file_type": file.content_type,
-                "upload_method": "file_upload",
+                "upload_method": "formatted_upload",
                 "total_pages": len(pages),
-                "processing_method": "page_wise_extraction"
+                "processing_method": "html_preservation",
+                "contains_formatting": True
             }
         )
         
