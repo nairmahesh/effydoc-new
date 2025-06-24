@@ -350,26 +350,43 @@ const DocumentEditor = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Header */}
+      {/* Enhanced Header */}
       <div className="bg-white shadow sm:rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <DocumentTextIcon className="h-8 w-8 text-indigo-600 mr-3" />
-              <div>
-                <input
-                  type="text"
-                  value={document.title}
-                  onChange={(e) => setDocument({...document, title: e.target.value})}
-                  className="text-2xl font-bold text-gray-900 border-none outline-none bg-transparent"
-                />
-                <p className="text-sm text-gray-600">
-                  Interactive Document Editor • Last updated: {new Date(document.updated_at).toLocaleString()}
-                </p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate('/documents')}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                Back to Documents
+              </button>
+              <div className="flex items-center">
+                <DocumentTextIcon className="h-8 w-8 text-indigo-600 mr-3" />
+                <div>
+                  <input
+                    type="text"
+                    value={document.title}
+                    onChange={(e) => setDocument({...document, title: e.target.value})}
+                    className="text-2xl font-bold text-gray-900 border-none outline-none bg-transparent hover:bg-gray-50 px-2 py-1 rounded"
+                    placeholder="Document title"
+                  />
+                  <p className="text-sm text-gray-600">
+                    ✨ Rich Text Editor • Last updated: {new Date(document.updated_at).toLocaleString()}
+                  </p>
+                </div>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
+              {saving && (
+                <div className="flex items-center text-sm text-gray-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-500 mr-2"></div>
+                  Saving...
+                </div>
+              )}
+              
               <button
                 onClick={() => navigate(`/documents/${documentId}/preview`)}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
@@ -377,6 +394,44 @@ const DocumentEditor = () => {
                 <EyeIcon className="h-4 w-4 mr-2" />
                 Preview
               </button>
+              
+              <button
+                onClick={saveDocument}
+                disabled={saving}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {saving ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <CheckIcon className="h-4 w-4 mr-2" />
+                    Save
+                  </>
+                )}
+              </button>
+              
+              <button
+                onClick={() => setShowElementPanel(!showElementPanel)}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <PlusIcon className="h-4 w-4 mr-2" />
+                Add Elements
+              </button>
+            </div>
+          </div>
+          
+          {/* Document Stats */}
+          <div className="flex items-center space-x-6 text-sm text-gray-500">
+            <span>📄 {document.sections?.length || 0} sections</span>
+            <span>📊 {document.type} document</span>
+            <span>👤 {document.collaborators?.length || 0} collaborators</span>
+            <span>🏷️ {document.tags?.length || 0} tags</span>
+          </div>
+        </div>
+      </div>
               
               <button
                 onClick={saveDocument}
