@@ -507,12 +507,24 @@ const PagewiseDocumentViewer = () => {
 
               {/* Page Content */}
               {editing ? (
-                <textarea
-                  value={currentPageData?.content || ''}
-                  onChange={(e) => updatePageContent(e.target.value)}
-                  className="w-full h-96 p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Start editing page content..."
-                />
+                // Use GoogleDocsLikeEditor for formatted content, textarea for plain text
+                isFormattedContent(currentPageData?.content) ? (
+                  <div className="border border-gray-300 rounded-lg min-h-96">
+                    <GoogleDocsLikeEditor
+                      value={currentPageData?.content || ''}
+                      onChange={(content) => updatePageContent(content)}
+                      placeholder="Start editing page content..."
+                      className="min-h-96"
+                    />
+                  </div>
+                ) : (
+                  <textarea
+                    value={currentPageData?.content || ''}
+                    onChange={(e) => updatePageContent(e.target.value)}
+                    className="w-full h-96 p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Start editing page content..."
+                  />
+                )
               ) : (
                 <div className="prose max-w-none">
                   {/* Use FormattedDocumentViewer for better Google Docs-like rendering */}
