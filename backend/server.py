@@ -107,7 +107,11 @@ async def login_user(login_data: dict):
     )
     
     user = User(**{k: v for k, v in user_data.items() if k != 'hashed_password'})
-    access_token = create_access_token(data={"sub": user.id})
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.id}, 
+        expires_delta=access_token_expires
+    )
     
     return {
         "access_token": access_token,
