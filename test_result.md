@@ -463,7 +463,8 @@ metadata:
 test_plan:
   current_focus: 
     - "Document Preview Functionality"
-  stuck_tasks: []
+  stuck_tasks: 
+    - "Document Preview Functionality"
   test_all: false
   test_priority: "high_first"
 
