@@ -210,6 +210,56 @@ const DocumentUpload = () => {
                 />
               </div>
 
+              {/* PDF/Document Processing Options */}
+              {uploadedFile && uploadedFile.type === 'application/pdf' && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700">PDF Processing Options</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="pdfProcessing"
+                        checked={!extractText}
+                        onChange={() => setExtractText(false)}
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        <strong>Preserve Original PDF</strong> - View as PDF with original layout, images, and formatting (recommended for forms, documents with complex layouts)
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="pdfProcessing"
+                        checked={extractText}
+                        onChange={() => setExtractText(true)}
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        <strong>Extract Text for Editing</strong> - Convert to editable text (images will be lost, best for text-heavy documents)
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              )}
+              
+              {/* For other file types, show a simple toggle */}
+              {uploadedFile && uploadedFile.type !== 'application/pdf' && (
+                <div>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={extractText}
+                      onChange={(e) => setExtractText(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">
+                      Extract and optimize content for editing
+                    </span>
+                  </label>
+                </div>
+              )}
+
               {/* Upload Actions */}
               <div className="flex items-center justify-between">
                 <button
