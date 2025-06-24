@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { documentsAPI } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import FormattedDocumentViewer from '../components/Common/FormattedDocumentViewer';
+import GoogleDocsLikeEditor from '../components/Common/GoogleDocsLikeEditor';
 import {
   DocumentTextIcon,
   ChevronLeftIcon,
