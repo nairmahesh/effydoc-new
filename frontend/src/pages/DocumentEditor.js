@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { documentsAPI } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -16,7 +18,9 @@ import {
   ChatBubbleLeftRightIcon,
   ShareIcon,
   CheckIcon,
-  SparklesIcon
+  SparklesIcon,
+  ArrowLeftIcon,
+  BookmarkIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
