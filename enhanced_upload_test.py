@@ -161,6 +161,13 @@ class EnhancedUploadTest(unittest.TestCase):
         """Test retrieving documents with HTML content"""
         print("\nTesting document retrieval with HTML content...")
         
+        # First run the upload test to get a document ID
+        if not hasattr(self, 'docx_document_id'):
+            self.test_docx_upload_with_formatting()
+            
+        # Give the server a moment to process the document
+        time.sleep(1)
+        
         # Retrieve the DOCX document
         response = requests.get(f"{self.base_url}/documents/{self.docx_document_id}", 
                                headers=self.headers)
@@ -178,7 +185,7 @@ class EnhancedUploadTest(unittest.TestCase):
         self.assertIn("<div", page_content, "Retrieved content is not in HTML format")
         
         # Check for formatting elements
-        self.assertTrue(any(tag in page_content for tag in ["<b>", "<strong>", "<i>", "<em>", "<ul>", "<ol>", "<li>", "<table>"]), 
+        self.assertTrue(any(tag in page_content.lower() for tag in ["<b>", "<strong>", "<i>", "<em>", "<ul>", "<ol>", "<li>", "<table>"]), 
                         "Retrieved HTML content does not contain formatting tags")
         
         # Check metadata
