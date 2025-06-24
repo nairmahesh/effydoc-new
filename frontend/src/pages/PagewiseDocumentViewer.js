@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { documentsAPI } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
+import FormattedDocumentViewer from '../components/Common/FormattedDocumentViewer';
 import {
   DocumentTextIcon,
   ChevronLeftIcon,
