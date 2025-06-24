@@ -349,6 +349,9 @@ async def upload_document(
         raise HTTPException(status_code=400, detail="Unsupported file type. Please upload PDF, DOCX, or TXT files.")
     
     try:
+        # Convert extract_text string to boolean
+        extract_text_bool = extract_text.lower() in ('true', '1', 'yes', 'on')
+        
         # Read file content
         content = await file.read()
         
