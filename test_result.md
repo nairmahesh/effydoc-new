@@ -303,6 +303,18 @@ backend:
         agent: "testing"
         comment: "Authentication issues have been fixed. The recent changes to the AuthContext.js and api.js files have resolved the authentication problems. The JWT token is now being properly stored in localStorage and included in API requests. The document preview functionality is working correctly - documents can be created, viewed, and edited without any authentication errors. The PagewiseDocumentViewer component correctly displays document content and the FormattedDocumentViewer properly renders HTML content."
 
+  - task: "Multi-page Document Functionality"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Comprehensive testing of the multi-page document functionality confirms it is working correctly. PDF documents are properly split into multiple pages during upload, with each page having the correct page number and content. DOCX documents with page breaks are also correctly processed into multiple pages. The system correctly handles page-specific operations including updating page content, adding multimedia elements to specific pages, adding interactive elements to specific pages, and tracking page views. Page analytics are also working correctly, showing view data for individual pages. The implementation successfully enables proper thumbnails in the left sidebar by creating multiple pages for documents instead of putting everything in one page."
+
 frontend:
   - task: "API Integration Layer"
     implemented: true
@@ -506,3 +518,5 @@ agent_communication:
     message: "Completed additional edge case testing for the document upload functionality. The server correctly handles all edge cases including: 1) Missing files in upload requests, 2) Unsupported file types with appropriate error messages, 3) Invalid extract_text parameter values, 4) Empty files, 5) Corrupted files with appropriate error handling, 6) Long filenames, 7) Special characters in filenames, and 8) Authentication validation. The document upload endpoint has robust error handling and validation. All tests confirm that the backend implementation is working correctly. The reported 'Failed to upload document' errors are likely due to client-side issues, network problems, or specific file characteristics not covered in our testing. The backend API for document upload is functioning as expected with proper validation, processing, and error handling."
   - agent: "testing"
     message: "Completed testing of the fixed document upload functionality with extract_text parameter handling. Created a dedicated test script to verify the parameter handling that was causing 400 Bad Request and 422 Unprocessable Entity errors. Tests confirmed that: 1) Document upload with extract_text=true (default) works correctly, 2) Document upload with extract_text=false works correctly and preserves the original PDF as base64, 3) Document upload without the extract_text parameter defaults to true as expected, 4) Various file types (PDF, DOCX, TXT) are handled properly, 5) Different parameter values ('true', 'false', '1', '0', 'yes', 'on') are all correctly interpreted. The fix in the server.py file properly converts the extract_text string parameter to a boolean value using the line 'extract_text_bool = extract_text.lower() in ('true', '1', 'yes', 'on')'. No 400 or 422 errors were encountered during testing, confirming that the parameter handling fixes have resolved the upload errors."
+  - agent: "testing"
+    message: "Completed comprehensive testing of the multi-page document functionality. The system now correctly processes PDF documents into multiple pages, with each page having the correct page number and content. DOCX documents with page breaks are also properly split into multiple pages. The page-wise document structure is working as expected, with each page having its own content, multimedia elements, and interactive elements. Page-specific operations like updating content, adding elements, and tracking views are all functioning correctly. The implementation successfully enables proper thumbnails in the left sidebar by creating multiple pages for documents instead of putting everything in one page. All tests passed successfully, confirming that the multi-page document functionality is working as designed."
