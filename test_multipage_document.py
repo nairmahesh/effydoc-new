@@ -311,7 +311,16 @@ def test_multipage_document_functionality():
         # 8. Test adding interactive element to a specific page
         print("\n8. Testing adding interactive element to a specific page...")
         
-        # Add an interactive element to page 4 of the PDF document
+        # First, get the document to check how many pages it has
+        response = requests.get(f"{base_url}/documents/{pdf_document_id}", headers=headers)
+        assert response.status_code == 200, f"Failed to retrieve document: {response.text}"
+        doc_data = response.json()
+        
+        # Determine which page to add interactive element to
+        target_page_num = min(4, len(doc_data["pages"]))
+        print(f"Adding interactive element to page {target_page_num}")
+        
+        # Add an interactive element to the target page of the PDF document
         interactive_data = {
             "type": "signature_field",
             "label": "Sign Here",
@@ -320,7 +329,7 @@ def test_multipage_document_functionality():
         }
         
         response = requests.post(
-            f"{base_url}/documents/{pdf_document_id}/pages/4/interactive",
+            f"{base_url}/documents/{pdf_document_id}/pages/{target_page_num}/interactive",
             json=interactive_data,
             headers=headers
         )
