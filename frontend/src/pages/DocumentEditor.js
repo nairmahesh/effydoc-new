@@ -443,16 +443,20 @@ const DocumentEditor = () => {
 
               {/* Rich Text Editor */}
               <div className="mb-4">
-                <ReactQuill
-                  theme="snow"
+                <MDEditor
                   value={section.content || ''}
-                  onChange={(content) => updateSectionContent(section.id, content)}
-                  modules={quillModules}
-                  formats={quillFormats}
-                  placeholder="Start writing your content here..."
-                  style={{
-                    height: '300px',
-                    marginBottom: '50px'
+                  onChange={(value) => updateSectionContent(section.id, value || '')}
+                  height={300}
+                  hideToolbar={false}
+                  preview="edit"
+                  data-color-mode="light"
+                  textareaProps={{
+                    placeholder: 'Start writing your content here...',
+                    style: {
+                      fontSize: '16px',
+                      lineHeight: '1.6',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif'
+                    }
                   }}
                 />
               </div>
