@@ -316,9 +316,10 @@ def test_document_upload_functionality():
     
     print("✅ Unsupported file type rejection working")
     
-    # 9. Test uploading with invalid extract_text parameter
-    print("\n9. Testing upload with invalid extract_text parameter...")
+    # 9. Test uploading with extract_text parameter validation
+    print("\n9. Testing upload with extract_text parameter validation...")
     
+    # Test with invalid value - should return validation error
     with open(txt_path, "rb") as f:
         files = {"file": ("test_document.txt", f, "text/plain")}
         response = requests.post(
@@ -328,10 +329,25 @@ def test_document_upload_functionality():
             headers=auth_headers
         )
     
-    # This should still work as FastAPI will convert "invalid_value" to True
-    assert response.status_code == 200, f"Failed to upload with invalid extract_text parameter: {response.text}"
+    # FastAPI should validate the boolean parameter
+    assert response.status_code == 422, f"Expected 422 status code for invalid extract_text parameter, got {response.status_code}"
+    data = response.json()
+    assert "detail" in data, "Missing error detail in response"
+    assert "bool_parsing" in str(data), "Unexpected error message"
     
-    print("✅ Upload with invalid extract_text parameter handling working")
+    # Test with valid boolean values
+    with open(txt_path, "rb") as f:
+        files = {"file": ("test_document.txt", f, "text/plain")}
+        response = requests.post(
+            f"{base_url}/documents/upload",
+            files=files,
+            data={"extract_text": "true"},
+            headers=auth_headers
+        )
+    
+    assert response.status_code == 200, f"Failed to upload with extract_text=true: {response.text}"
+    
+    print("✅ Upload with extract_text parameter validation working")
     
     # 10. Test uploading without authentication
     print("\n10. Testing upload without authentication...")
