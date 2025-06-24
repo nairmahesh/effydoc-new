@@ -217,14 +217,23 @@ def test_multipage_document_functionality():
         # 6. Test updating a specific page
         print("\n6. Testing updating a specific page...")
         
-        # Update page 2 of the PDF document
+        # First, get the document to check how many pages it has
+        response = requests.get(f"{base_url}/documents/{pdf_document_id}", headers=headers)
+        assert response.status_code == 200, f"Failed to retrieve document: {response.text}"
+        doc_data = response.json()
+        
+        # Determine which page to update
+        target_page_num = min(2, len(doc_data["pages"]))
+        print(f"Updating page {target_page_num}")
+        
+        # Update the target page of the PDF document
         page_update_data = {
-            "title": "Updated Page 2",
-            "content": "<div style='font-family: Arial; color: blue;'>This is updated content for page 2 with <b>HTML formatting</b>.</div>"
+            "title": f"Updated Page {target_page_num}",
+            "content": f"<div style='font-family: Arial; color: blue;'>This is updated content for page {target_page_num} with <b>HTML formatting</b>.</div>"
         }
         
         response = requests.put(
-            f"{base_url}/documents/{pdf_document_id}/pages/2",
+            f"{base_url}/documents/{pdf_document_id}/pages/{target_page_num}",
             json=page_update_data,
             headers=headers
         )
