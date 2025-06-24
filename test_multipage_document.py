@@ -258,7 +258,7 @@ def test_multipage_document_functionality():
         target_page = next((page for page in data["pages"] if page["page_number"] == target_page_num), None)
         
         assert target_page, f"Target page {target_page_num} not found in document"
-        assert target_page["title"] == "Updated Page 2", f"Page title not updated, got: {target_page['title']}"
+        assert target_page["title"] == f"Updated Page {target_page_num}", f"Page title not updated, got: {target_page['title']}"
         assert "<b>HTML formatting</b>" in target_page["content"], "HTML formatting not preserved in update"
         
         print("✅ Updating a specific page working")
