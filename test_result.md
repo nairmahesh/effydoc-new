@@ -284,9 +284,9 @@ backend:
         
   - task: "Document Preview Functionality"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/pages/PagewiseDocumentViewer.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -299,6 +299,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "Found authentication issues causing 'Failed to load document' errors. The frontend is making API calls to /api/users/me which are returning 403 Forbidden errors. This authentication issue is preventing document loading. The JWT token is either not being stored correctly in localStorage, not being included correctly in request headers, or being rejected by the backend (expired or invalid). The error handling in PagewiseDocumentViewer shows toast error messages when document loading fails."
+      - working: true
+        agent: "testing"
+        comment: "Authentication issues have been fixed. The recent changes to the AuthContext.js and api.js files have resolved the authentication problems. The JWT token is now being properly stored in localStorage and included in API requests. The document preview functionality is working correctly - documents can be created, viewed, and edited without any authentication errors. The PagewiseDocumentViewer component correctly displays document content and the FormattedDocumentViewer properly renders HTML content."
 
 frontend:
   - task: "API Integration Layer"
