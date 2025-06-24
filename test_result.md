@@ -284,9 +284,9 @@ backend:
         
   - task: "Document Preview Functionality"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/PagewiseDocumentViewer.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -296,6 +296,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Further testing confirms that the document preview functionality is working correctly. The issue with empty pages array when creating a document directly is expected behavior - the backend creates pages only when uploading documents, not when creating them via the API. When uploading a document, the HTML content is properly preserved and the FormattedDocumentViewer correctly renders it. The isFormattedContent function in PagewiseDocumentViewer correctly identifies HTML content. The document preview route is properly configured and the components are working as expected."
+      - working: false
+        agent: "testing"
+        comment: "Found authentication issues causing 'Failed to load document' errors. The frontend is making API calls to /api/users/me which are returning 403 Forbidden errors. This authentication issue is preventing document loading. The JWT token is either not being stored correctly in localStorage, not being included correctly in request headers, or being rejected by the backend (expired or invalid). The error handling in PagewiseDocumentViewer shows toast error messages when document loading fails."
 
 frontend:
   - task: "API Integration Layer"
