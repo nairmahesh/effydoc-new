@@ -52,18 +52,18 @@ api.interceptors.response.use(
 export const authAPI = {
   login: async (email, password) => {
     const response = await api.post('/auth/login', { email, password });
-    if (response.data.access_token) {
-      setToken(response.data.access_token);
+    if (response.access_token) {
+      setToken(response.access_token);
     }
-    return response.data;
+    return response;
   },
   
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
-    if (response.data.access_token) {
-      setToken(response.data.access_token);
+    if (response.access_token) {
+      setToken(response.access_token);
     }
-    return response.data;
+    return response;
   },
   
   logout: () => {
