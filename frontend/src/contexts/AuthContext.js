@@ -22,10 +22,19 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      
       const response = await authAPI.getCurrentUser();
       setUser(response.data);
     } catch (error) {
-      // Token invalid or expired
+      // Token invalid, expired, or user doesn't exist
+      console.log('Auth check failed:', error.response?.status);
+      localStorage.removeItem('token'); // Clear invalid token
       setUser(null);
     } finally {
       setLoading(false);
