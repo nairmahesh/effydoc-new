@@ -1,7 +1,5 @@
 import React from 'react';
 
-import React from 'react';
-
 const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
   // Clean and enhance HTML content for better display
   const enhanceContent = (htmlContent) => {
