@@ -38,7 +38,9 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif',
           lineHeight: '1.6',
           color: '#202124',
-          background: 'white'
+          background: 'white',
+          userSelect: 'text', // Make text selectable
+          cursor: 'text' // Show text cursor
         }}
       >
         <div 
@@ -47,18 +49,31 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
             __html: enhanceContent(content) 
           }}
           style={{
-            maxWidth: '100%'
+            maxWidth: '100%',
+            textAlign: 'left', // Ensure left alignment by default
+            userSelect: 'text', // Make text selectable
+            cursor: 'text' // Show text cursor
           }}
         />
         
         <style dangerouslySetInnerHTML={{
           __html: `
+            .formatted-document-content {
+              user-select: text !important;
+              cursor: text !important;
+            }
+            
+            .formatted-document-content * {
+              user-select: text !important;
+            }
+            
             .formatted-document-content img {
               max-width: 100%;
               height: auto;
               margin: 10px 0;
               border-radius: 4px;
               box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+              user-select: none; /* Images should not be text-selectable */
             }
             
             .formatted-document-content h1,
@@ -72,6 +87,7 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
               margin-bottom: 0.5em;
               font-weight: 500;
               font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              text-align: left; /* Ensure left alignment */
             }
             
             .formatted-document-content h1 {
@@ -99,17 +115,20 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
               margin-bottom: 1em;
               color: #202124;
               line-height: 1.6;
+              text-align: left; /* Ensure left alignment */
             }
             
             .formatted-document-content ul,
             .formatted-document-content ol {
               margin: 1em 0;
               padding-left: 2em;
+              text-align: left; /* Ensure left alignment */
             }
             
             .formatted-document-content li {
               margin-bottom: 0.5em;
               line-height: 1.6;
+              text-align: left; /* Ensure left alignment */
             }
             
             .formatted-document-content table {
@@ -145,6 +164,7 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
               padding: 1rem;
               border-radius: 0 4px 4px 0;
               font-style: italic;
+              text-align: left; /* Ensure left alignment */
             }
             
             .formatted-document-content code {
@@ -164,6 +184,7 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
               overflow-x: auto;
               margin: 1em 0;
               border: 1px solid #dadce0;
+              text-align: left; /* Ensure left alignment */
             }
             
             .formatted-document-content a {
@@ -208,6 +229,11 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
             
             .formatted-document-content ol ol ol {
               list-style-type: lower-roman;
+            }
+            
+            /* Preserve original text alignment from uploaded documents */
+            .formatted-document-content div[style*="text-align"] {
+              /* Don't override original text alignment */
             }
           `
         }} />
