@@ -133,7 +133,6 @@ class EnhancedUploadTest(unittest.TestCase):
             response = requests.post(
                 f"{self.base_url}/documents/upload",
                 files=files,
-                data={"title": "Plain Text Test"},
                 headers={"Authorization": self.headers["Authorization"]}
             )
         
