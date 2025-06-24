@@ -1,0 +1,21 @@
+<h1>Test Document with Formatting</h1>
+<p>This is a <strong>formatted</strong> document with <em>styling</em>.</p>
+<h2>Section 1</h2>
+<p>This is the first section with some content.</p>
+<ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+</ul>
+<h2>Section 2</h2>
+<p>This is the second section with a table:</p>
+<table border="1">
+    <tr>
+        <th>Header 1</th>
+        <th>Header 2</th>
+    </tr>
+    <tr>
+        <td>Cell 1</td>
+        <td>Cell 2</td>
+    </tr>
+</table>
