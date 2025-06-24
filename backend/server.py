@@ -408,36 +408,64 @@ async def upload_document(
         
         elif file.content_type == "application/pdf":
             try:
-                # For PDF, we still extract text but wrap it in proper HTML
-                import PyPDF2
-                pdf_reader = PyPDF2.PdfReader(BytesIO(content))
-                
-                for page_num, page in enumerate(pdf_reader.pages, 1):
-                    try:
-                        page_text = page.extract_text()
-                        if page_text and page_text.strip():
-                            # Convert plain text to properly formatted HTML
-                            formatted_html = f"""
-                            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                                       line-height: 1.6; 
-                                       white-space: pre-wrap; 
-                                       padding: 20px;">
-                                {page_text.strip()}
-                            </div>
-                            """
+                if not extract_text:
+                    # Store PDF as base64 for native PDF viewing (preserves layout, images, etc.)
+                    pdf_base64 = base64.b64encode(content).decode()
+                    page_obj = DocumentPage(
+                        page_number=1,
+                        title=title or file.filename.rsplit('.', 1)[0],
+                        content=f"""
+                        <div style="width: 100%; height: 800px; text-align: center;">
+                            <embed src="data:application/pdf;base64,{pdf_base64}" 
+                                   type="application/pdf" 
+                                   width="100%" 
+                                   height="100%" 
+                                   style="border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                            <p style="margin-top: 20px;">
+                                <a href="data:application/pdf;base64,{pdf_base64}" 
+                                   download="{file.filename}" 
+                                   style="color: #1a73e8; text-decoration: none;">
+                                    📄 Download Original PDF
+                                </a>
+                            </p>
+                        </div>
+                        """,
+                        metadata={"is_pdf": True, "original_filename": file.filename}
+                    )
+                    pages.append(page_obj)
+                else:
+                    # Extract text for editing (current behavior)
+                    import PyPDF2
+                    pdf_reader = PyPDF2.PdfReader(BytesIO(content))
+                    
+                    for page_num, page in enumerate(pdf_reader.pages, 1):
+                        try:
+                            page_text = page.extract_text()
+                            if page_text and page_text.strip():
+                                # Convert plain text to properly formatted HTML - PRESERVE ALIGNMENT
+                                formatted_html = f"""
+                                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                                           line-height: 1.6; 
+                                           white-space: pre-wrap; 
+                                           text-align: left;
+                                           width: 100%;
+                                           padding: 20px;">
+                                    {page_text.strip()}
+                                </div>
+                                """
+                                page_obj = DocumentPage(
+                                    page_number=page_num,
+                                    title=f"Page {page_num}",
+                                    content=formatted_html
+                                )
+                                pages.append(page_obj)
+                        except Exception as e:
                             page_obj = DocumentPage(
                                 page_number=page_num,
                                 title=f"Page {page_num}",
-                                content=formatted_html
+                                content=f"<p>[Content extraction failed: {str(e)}]</p>"
                             )
                             pages.append(page_obj)
-                    except Exception as e:
-                        page_obj = DocumentPage(
-                            page_number=page_num,
-                            title=f"Page {page_num}",
-                            content=f"<p>[Content extraction failed: {str(e)}]</p>"
-                        )
-                        pages.append(page_obj)
             except Exception as e:
                 raise HTTPException(status_code=400, detail=f"Failed to process PDF: {str(e)}")
         
