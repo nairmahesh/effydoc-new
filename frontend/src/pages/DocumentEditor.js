@@ -450,9 +450,9 @@ const DocumentEditor = () => {
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-gray-600">Editor Mode:</span>
                     <button
-                      onClick={() => setUseSimpleEditor(false)}
+                      onClick={() => setEditorMode('markdown')}
                       className={`px-3 py-1 text-xs rounded ${
-                        !useSimpleEditor
+                        editorMode === 'markdown'
                           ? 'bg-blue-100 text-blue-700 border border-blue-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
@@ -460,9 +460,9 @@ const DocumentEditor = () => {
                       Markdown
                     </button>
                     <button
-                      onClick={() => setUseSimpleEditor(true)}
+                      onClick={() => setEditorMode('simple')}
                       className={`px-3 py-1 text-xs rounded ${
-                        useSimpleEditor
+                        editorMode === 'simple'
                           ? 'bg-blue-100 text-blue-700 border border-blue-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
