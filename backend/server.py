@@ -316,6 +316,7 @@ async def create_document(
 async def upload_document(
     file: UploadFile = File(...),
     title: str = None,
+    extract_text: bool = Form(True),  # Option to extract text or preserve original
     current_user: User = Depends(get_current_active_user)
 ):
     """Upload a document file and convert it to Google Docs-like format with formatting preserved"""
