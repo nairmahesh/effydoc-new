@@ -5,7 +5,7 @@ const FormattedDocumentViewer = ({ content, title, isPagewise = false }) => {
   const enhanceContent = (htmlContent) => {
     if (!htmlContent) return '';
     
-    // For page-wise viewing, we don't need the outer container styling
+    // For page-wise viewing, return content as-is to preserve original formatting
     if (isPagewise) {
       return htmlContent;
     }
