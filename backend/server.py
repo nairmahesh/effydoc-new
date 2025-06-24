@@ -5,7 +5,7 @@ from pathlib import Path
 backend_dir = Path(__file__).parent
 sys.path.append(str(backend_dir))
 
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, File, UploadFile
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
