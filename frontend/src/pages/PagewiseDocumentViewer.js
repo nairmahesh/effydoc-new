@@ -505,6 +505,7 @@ const PagewiseDocumentViewer = () => {
                     <FormattedDocumentViewer 
                       content={currentPageData?.content} 
                       title={currentPageData?.title || `Page ${currentPage}`}
+                      isPagewise={true}
                     />
                   ) : (
                     <div className="whitespace-pre-wrap text-gray-900 leading-relaxed">
