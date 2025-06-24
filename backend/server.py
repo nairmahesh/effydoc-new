@@ -381,12 +381,12 @@ async def upload_document(
                                 f'src="{base64_image}"'
                             )
                 
-                # Clean up and enhance HTML styling
+                # Clean up and enhance HTML styling - PRESERVE ORIGINAL FORMATTING
                 document_html = f"""
                 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
                            line-height: 1.6; 
-                           max-width: 800px; 
-                           margin: 0 auto; 
+                           width: 100%;
+                           text-align: left;
                            padding: 20px;
                            background: white;">
                     {document_html}
