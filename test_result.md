@@ -284,7 +284,7 @@ backend:
         
   - task: "Enhanced Document Upload with Formatting Preservation"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
@@ -293,6 +293,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Tested the enhanced document upload functionality that preserves formatting like Google Docs. The /api/documents/upload endpoint successfully processes DOCX files with Mammoth.js to preserve formatting. HTML content is generated instead of plain text, and images are converted to base64 and embedded. The response includes properly formatted HTML content. Uploaded documents maintain their original styling, including headers, bold text, lists, and tables. The GET /api/documents/{document_id} endpoint returns content with HTML markup, and both sections and pages contain formatted content. Metadata correctly indicates that the document contains formatting. Backward compatibility is maintained, with plain text documents properly converted to HTML. The system handles both old and new document formats correctly."
+      - working: false
+        agent: "testing"
+        comment: "Identified an issue with multi-page document support. When uploading a DOCX file with multiple pages, only the first page is processed and stored. The system does not detect page breaks in DOCX files, resulting in all content being merged into a single page. This prevents the document viewer from functioning like Google Docs for multi-page documents. The issue is in the document processing logic in the /api/documents/upload endpoint, where the code creates only one page object regardless of how many pages are in the original document. Formatting preservation works well for single-page documents, with proper HTML conversion and preservation of elements like bold/italic text, lists, tables, and headings."
 
 frontend:
   - task: "API Integration Layer"
