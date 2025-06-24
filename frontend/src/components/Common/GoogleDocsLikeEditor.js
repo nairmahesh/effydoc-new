@@ -262,9 +262,10 @@ const GoogleDocsLikeEditor = ({ value, onChange, placeholder }) => {
           background: 'white'
         }}
         suppressContentEditableWarning={true}
-        dangerouslySetInnerHTML={value ? { __html: value } : undefined}
       >
-        {!value && (
+        {value ? (
+          <div dangerouslySetInnerHTML={{ __html: value }} />
+        ) : (
           <div className="text-gray-400 pointer-events-none">
             {placeholder || 'Start writing your content here...'}
           </div>
