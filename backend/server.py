@@ -323,8 +323,8 @@ async def create_document(
 @api_router.post("/documents/upload")
 async def upload_document(
     file: UploadFile = File(...),
-    title: str = None,
-    extract_text: bool = Form(True),  # Option to extract text or preserve original
+    title: str = Form(None),
+    extract_text: str = Form("true"),  # String to handle both string and boolean values
     current_user: User = Depends(get_current_active_user)
 ):
     """Upload a document file and convert it to Google Docs-like format with formatting preserved"""
