@@ -24,7 +24,13 @@ import toast from 'react-hot-toast';
 
 // Helper function to check if content is formatted (contains HTML)
 const isFormattedContent = (content) => {
-  return content && typeof content === 'string' && content.includes('<') && content.includes('>');
+  if (!content || typeof content !== 'string') return false;
+  
+  // Check for HTML tags - more robust than just looking for < and >
+  const htmlTags = ['<div', '<p', '<h1', '<h2', '<h3', '<h4', '<h5', '<h6', '<ul', '<ol', '<li', 
+                    '<table', '<tr', '<td', '<th', '<img', '<strong', '<b', '<em', '<i', '<span'];
+  
+  return htmlTags.some(tag => content.toLowerCase().includes(tag));
 };
 
 const PagewiseDocumentViewer = () => {
