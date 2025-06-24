@@ -22,6 +22,11 @@ import {
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
+// Helper function to check if content is formatted (contains HTML)
+const isFormattedContent = (content) => {
+  return content && typeof content === 'string' && content.includes('<') && content.includes('>');
+};
+
 const PagewiseDocumentViewer = () => {
   const { documentId } = useParams();
   const { user } = useAuth();
