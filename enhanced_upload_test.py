@@ -199,6 +199,13 @@ class EnhancedUploadTest(unittest.TestCase):
         """Test backward compatibility with plain text documents"""
         print("\nTesting backward compatibility with plain text documents...")
         
+        # First run the text upload test to get a document ID
+        if not hasattr(self, 'txt_document_id'):
+            self.test_text_upload_with_html_conversion()
+            
+        # Give the server a moment to process the document
+        time.sleep(1)
+        
         # Retrieve the plain text document
         response = requests.get(f"{self.base_url}/documents/{self.txt_document_id}", 
                                headers=self.headers)
