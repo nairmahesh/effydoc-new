@@ -99,7 +99,7 @@ const PagewiseDocumentViewer = () => {
   const loadDocument = async () => {
     try {
       const response = await documentsAPI.get(documentId);
-      setDocument(response.data);
+      setDocument(response);
     } catch (error) {
       console.error('Error loading document:', error);
       toast.error('Failed to load document');
