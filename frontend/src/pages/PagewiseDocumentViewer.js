@@ -489,22 +489,11 @@ const PagewiseDocumentViewer = () => {
                 />
               ) : (
                 <div className="prose max-w-none">
-                  {/* Check if content contains HTML (uploaded document with formatting) */}
-                  {currentPageData?.content?.includes('<') && currentPageData?.content?.includes('>') ? (
-                    <div 
-                      className="formatted-document-display"
-                      dangerouslySetInnerHTML={{ 
-                        __html: currentPageData.content 
-                      }}
-                      style={{
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
-                        lineHeight: '1.6',
-                        background: 'white',
-                        padding: '20px',
-                        borderRadius: '8px',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                        margin: '20px 0'
-                      }}
+                  {/* Use FormattedDocumentViewer for better Google Docs-like rendering */}
+                  {isFormattedContent(currentPageData?.content) ? (
+                    <FormattedDocumentViewer 
+                      content={currentPageData?.content} 
+                      title={currentPageData?.title || `Page ${currentPage}`}
                     />
                   ) : (
                     <div className="whitespace-pre-wrap text-gray-900 leading-relaxed">
