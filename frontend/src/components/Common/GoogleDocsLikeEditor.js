@@ -6,9 +6,9 @@ const GoogleDocsLikeEditor = ({ value, onChange, placeholder }) => {
 
   useEffect(() => {
     if (editorRef.current) {
-      // Set HTML content while preserving formatting
-      if (value !== editorRef.current.innerHTML) {
-        editorRef.current.innerHTML = value || '';
+      // Set HTML content while preserving ALL formatting including images
+      if (value && value !== editorRef.current.innerHTML) {
+        editorRef.current.innerHTML = value;
       }
     }
   }, [value]);
@@ -20,12 +20,13 @@ const GoogleDocsLikeEditor = ({ value, onChange, placeholder }) => {
   };
 
   const handlePaste = (e) => {
-    // Allow rich content pasting
+    // Allow rich content pasting with images
     e.preventDefault();
     const paste = (e.clipboardData || window.clipboardData).getData('text/html') || 
                  (e.clipboardData || window.clipboardData).getData('text/plain');
     
     if (paste) {
+      // Use insertHTML to preserve all formatting and images
       document.execCommand('insertHTML', false, paste);
       handleInput();
     }
@@ -57,6 +58,21 @@ const GoogleDocsLikeEditor = ({ value, onChange, placeholder }) => {
           break;
       }
     }
+  };
+
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = `<img src="${event.target.result}" style="max-width: 100%; height: auto; margin: 10px 0;" />`;
+        document.execCommand('insertHTML', false, img);
+        handleInput();
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = ''; // Reset file input
   };
 
   return (
@@ -200,6 +216,17 @@ const GoogleDocsLikeEditor = ({ value, onChange, placeholder }) => {
         
         <div className="w-px h-6 bg-gray-300 mx-2"></div>
         
+        {/* Insert Image */}
+        <label className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-100 cursor-pointer" title="Insert Image">
+          🖼️ Image
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+        </label>
+        
         {/* Insert Link */}
         <button
           type="button"
@@ -214,7 +241,7 @@ const GoogleDocsLikeEditor = ({ value, onChange, placeholder }) => {
         </button>
       </div>
 
-      {/* Google Docs-like Editor Area */}
+      {/* Google Docs-like Editor Area - PRESERVE ALL CONTENT */}
       <div
         ref={editorRef}
         contentEditable
@@ -235,6 +262,7 @@ const GoogleDocsLikeEditor = ({ value, onChange, placeholder }) => {
           background: 'white'
         }}
         suppressContentEditableWarning={true}
+        dangerouslySetInnerHTML={value ? { __html: value } : undefined}
       >
         {!value && (
           <div className="text-gray-400 pointer-events-none">
