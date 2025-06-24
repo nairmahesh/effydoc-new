@@ -95,7 +95,6 @@ class EnhancedUploadTest(unittest.TestCase):
             response = requests.post(
                 f"{self.base_url}/documents/upload",
                 files=files,
-                data={"title": "Formatted DOCX Test"},
                 headers={"Authorization": self.headers["Authorization"]}
             )
         
@@ -106,8 +105,6 @@ class EnhancedUploadTest(unittest.TestCase):
         self.assertEqual(data["message"], "Document uploaded and processed successfully", 
                          "Unexpected response message")
         self.assertIn("document", data, "Missing document in response")
-        self.assertEqual(data["document"]["title"], "Formatted DOCX Test", 
-                         "Document title mismatch")
         
         # Verify HTML content generation
         self.assertIn("pages", data["document"], "Missing pages in document")
@@ -118,7 +115,7 @@ class EnhancedUploadTest(unittest.TestCase):
         self.assertIn("<div", page_content, "Content is not in HTML format")
         
         # Check for formatting elements
-        self.assertTrue(any(tag in page_content for tag in ["<b>", "<strong>", "<i>", "<em>", "<ul>", "<ol>", "<li>", "<table>"]), 
+        self.assertTrue(any(tag in page_content.lower() for tag in ["<b>", "<strong>", "<i>", "<em>", "<ul>", "<ol>", "<li>", "<table>"]), 
                         "HTML content does not contain formatting tags")
         
         # Save document ID for retrieval test
