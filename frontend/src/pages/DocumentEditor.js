@@ -445,22 +445,56 @@ const DocumentEditor = () => {
 
               {/* Rich Text Editor */}
               <div className="mb-4">
-                <MDEditor
-                  value={section.content || ''}
-                  onChange={(value) => updateSectionContent(section.id, value || '')}
-                  height={300}
-                  hideToolbar={false}
-                  preview="edit"
-                  data-color-mode="light"
-                  textareaProps={{
-                    placeholder: 'Start writing your content here...',
-                    style: {
-                      fontSize: '16px',
-                      lineHeight: '1.6',
-                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif'
-                    }
-                  }}
-                />
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">Editor Mode:</span>
+                    <button
+                      onClick={() => setUseSimpleEditor(false)}
+                      className={`px-3 py-1 text-xs rounded ${
+                        !useSimpleEditor
+                          ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      Markdown
+                    </button>
+                    <button
+                      onClick={() => setUseSimpleEditor(true)}
+                      className={`px-3 py-1 text-xs rounded ${
+                        useSimpleEditor
+                          ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      Rich Text
+                    </button>
+                  </div>
+                </div>
+                
+                {useSimpleEditor ? (
+                  <SimpleRichTextEditor
+                    value={section.content || ''}
+                    onChange={(content) => updateSectionContent(section.id, content)}
+                    placeholder="Start writing your content here..."
+                  />
+                ) : (
+                  <MDEditor
+                    value={section.content || ''}
+                    onChange={(value) => updateSectionContent(section.id, value || '')}
+                    height={300}
+                    hideToolbar={false}
+                    preview="edit"
+                    data-color-mode="light"
+                    textareaProps={{
+                      placeholder: 'Start writing your content here...',
+                      style: {
+                        fontSize: '16px',
+                        lineHeight: '1.6',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif'
+                      }
+                    }}
+                  />
+                )}
               </div>
 
               {/* Multimedia Elements */}
