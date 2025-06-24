@@ -26,7 +26,7 @@ api.interceptors.request.use((config) => {
 
 // Handle responses and errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => response.data, // Return response.data directly
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
       removeToken();
