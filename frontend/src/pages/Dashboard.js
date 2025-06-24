@@ -29,9 +29,8 @@ const Dashboard = () => {
 
   const loadDashboardData = async () => {
     try {
-      const response = await documentsAPI.list();
-      // The response is already the data array, not wrapped in a data property
-      const docs = response;
+      // With the updated Axios interceptor, response is now the data array directly
+      const docs = await documentsAPI.list();
       setDocuments(docs.slice(0, 5)); // Show only recent 5
 
       // Calculate stats
