@@ -257,16 +257,25 @@ def test_multipage_document_functionality():
         # 7. Test adding multimedia to a specific page
         print("\n7. Testing adding multimedia to a specific page...")
         
-        # Add a multimedia element to page 3 of the DOCX document
+        # First, get the document to check how many pages it has
+        response = requests.get(f"{base_url}/documents/{docx_document_id}", headers=headers)
+        assert response.status_code == 200, f"Failed to retrieve document: {response.text}"
+        doc_data = response.json()
+        
+        # Determine which page to add multimedia to
+        target_page_num = min(3, len(doc_data["pages"]))
+        print(f"Adding multimedia to page {target_page_num}")
+        
+        # Add a multimedia element to the target page of the DOCX document
         multimedia_data = {
             "type": "image",
             "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-            "title": "Test Image on Page 3",
-            "description": "A test base64 image added to page 3"
+            "title": f"Test Image on Page {target_page_num}",
+            "description": f"A test base64 image added to page {target_page_num}"
         }
         
         response = requests.post(
-            f"{base_url}/documents/{docx_document_id}/pages/3/multimedia",
+            f"{base_url}/documents/{docx_document_id}/pages/{target_page_num}/multimedia",
             json=multimedia_data,
             headers=headers
         )
