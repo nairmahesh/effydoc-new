@@ -472,7 +472,7 @@ const DocumentEditor = () => {
                   </div>
                 </div>
                 
-                {useSimpleEditor ? (
+                {editorMode === 'simple' ? (
                   <SimpleRichTextEditor
                     value={section.content || ''}
                     onChange={(content) => updateSectionContent(section.id, content)}
