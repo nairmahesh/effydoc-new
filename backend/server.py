@@ -77,7 +77,11 @@ async def register_user(user_data: UserCreate):
     await users_collection.insert_one(user_dict)
     
     # Create access token
-    access_token = create_access_token(data={"sub": user.id})
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.id}, 
+        expires_delta=access_token_expires
+    )
     
     return {
         "access_token": access_token,
