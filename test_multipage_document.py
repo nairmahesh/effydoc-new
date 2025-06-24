@@ -383,10 +383,12 @@ def test_multipage_document_functionality():
         # Save session ID for subsequent tracking
         session_id = data["session_id"]
         
-        # Track a view of page 3 of the PDF document in the same session
+        # Track a view of page 3 (or another page if document has fewer pages)
+        print(f"Tracking view for page {target_page_num2}")
+        
         view_data = {
             "document_id": pdf_document_id,
-            "page_number": 3,
+            "page_number": target_page_num2,
             "session_id": session_id,
             "viewer_info": {
                 "ip_address": "192.168.1.1",
