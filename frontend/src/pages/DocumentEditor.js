@@ -35,7 +35,7 @@ const DocumentEditor = () => {
   const [activeSection, setActiveSection] = useState(null);
   const [showElementPanel, setShowElementPanel] = useState(false);
   const [elementType, setElementType] = useState(null);
-  const [useSimpleEditor, setUseSimpleEditor] = useState(false); // Switch between editors
+  const [useSimpleEditor, setUseSimpleEditor] = useState(false); // Switch between editors - default to Google Docs style
 
   // Interactive element forms
   const [multimediaForm, setMultimediaForm] = useState({
