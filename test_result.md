@@ -282,7 +282,7 @@ backend:
         agent: "testing"
         comment: "Fixed the issue in the send_document_via_email function. All email integration endpoints are now working correctly, including adding/removing email connections, setting primary email, updating notification settings, updating email signature, and sending documents via email."
         
-  - task: "Document Upload and Page-wise Viewing"
+  - task: "Enhanced Document Upload with Formatting Preservation"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -292,7 +292,7 @@ backend:
     status_history:
       - working: true
         agent: "testing"
-        comment: "Verified document upload functionality works correctly. The /api/documents/upload endpoint successfully processes text files into a page-wise structure. The uploaded document contains both sections (for backward compatibility) and pages arrays. The total_pages field is set correctly, and the document ID is returned for navigation. Document retrieval via /api/documents/{document_id} works properly, returning the document with both sections and pages arrays populated. Each page has the correct structure with page_number, title, and content. Additionally, tested page updates, adding multimedia and interactive elements to pages, and page view tracking - all working correctly."
+        comment: "Tested the enhanced document upload functionality that preserves formatting like Google Docs. The /api/documents/upload endpoint successfully processes DOCX files with Mammoth.js to preserve formatting. HTML content is generated instead of plain text, and images are converted to base64 and embedded. The response includes properly formatted HTML content. Uploaded documents maintain their original styling, including headers, bold text, lists, and tables. The GET /api/documents/{document_id} endpoint returns content with HTML markup, and both sections and pages contain formatted content. Metadata correctly indicates that the document contains formatting. Backward compatibility is maintained, with plain text documents properly converted to HTML. The system handles both old and new document formats correctly."
 
 frontend:
   - task: "API Integration Layer"
