@@ -428,59 +428,20 @@ const DocumentEditor = () => {
                 </div>
               </div>
 
-              {/* Simple Rich Text Editor */}
+              {/* Rich Text Editor */}
               <div className="mb-4">
-                <div className="border border-gray-300 rounded-md">
-                  {/* Simple Toolbar */}
-                  <div className="border-b border-gray-200 p-2 bg-gray-50 flex space-x-2">
-                    <button
-                      type="button"
-                      className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
-                      onClick={() => {
-                        const currentContent = section.content;
-                        const newContent = currentContent + '\n\n**Bold text here**';
-                        updateSectionContent(section.id, newContent);
-                      }}
-                    >
-                      <strong>B</strong>
-                    </button>
-                    <button
-                      type="button"
-                      className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
-                      onClick={() => {
-                        const currentContent = section.content;
-                        const newContent = currentContent + '\n\n*Italic text here*';
-                        updateSectionContent(section.id, newContent);
-                      }}
-                    >
-                      <em>I</em>
-                    </button>
-                    <button
-                      type="button"
-                      className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
-                      onClick={() => {
-                        const currentContent = section.content;
-                        const newContent = currentContent + '\n\n• List item 1\n• List item 2';
-                        updateSectionContent(section.id, newContent);
-                      }}
-                    >
-                      List
-                    </button>
-                  </div>
-                  
-                  {/* Text Area */}
-                  <textarea
-                    id={`section-${section.id}`}
-                    value={section.content}
-                    onChange={(e) => updateSectionContent(section.id, e.target.value)}
-                    rows={8}
-                    className="w-full p-3 border-none resize-none focus:outline-none focus:ring-0"
-                    placeholder="Start writing your content here..."
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Use **bold**, *italic*, and • for bullets in your content
-                </p>
+                <ReactQuill
+                  theme="snow"
+                  value={section.content || ''}
+                  onChange={(content) => updateSectionContent(section.id, content)}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  placeholder="Start writing your content here..."
+                  style={{
+                    height: '300px',
+                    marginBottom: '50px'
+                  }}
+                />
               </div>
 
               {/* Multimedia Elements */}
