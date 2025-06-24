@@ -432,24 +432,6 @@ const DocumentEditor = () => {
           </div>
         </div>
       </div>
-              
-              <button
-                onClick={saveDocument}
-                disabled={saving}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
-              >
-                {saving ? (
-                  <>
-                    <SparklesIcon className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <CheckIcon className="h-4 w-4 mr-2" />
-                    Save
-                  </>
-                )}
-              </button>
             </div>
           </div>
         </div>
