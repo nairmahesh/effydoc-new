@@ -8,6 +8,7 @@ import base64
 from io import BytesIO
 from docx import Document
 import tempfile
+import time
 
 # Get the backend URL from the frontend .env file
 BACKEND_URL = "https://4aa54517-8e64-4037-8338-35ac94bb76b8.preview.emergentagent.com/api"
