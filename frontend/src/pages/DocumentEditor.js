@@ -34,6 +34,7 @@ const DocumentEditor = () => {
   const [activeSection, setActiveSection] = useState(null);
   const [showElementPanel, setShowElementPanel] = useState(false);
   const [elementType, setElementType] = useState(null);
+  const [useSimpleEditor, setUseSimpleEditor] = useState(false); // Switch between editors
 
   // Interactive element forms
   const [multimediaForm, setMultimediaForm] = useState({
