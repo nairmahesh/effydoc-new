@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
+import SimpleRichTextEditor from '../components/Common/SimpleRichTextEditor';
 import { documentsAPI } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import {
